@@ -27,3 +27,10 @@
 * Moved country details data into the `Country` model.
 * Removed primitive helper functions for capital, region and population.
 * Updated list, search and details UI to use `Country` instead of `String`.
+
+## task/add-home-state
+
+- Added `HomeState` to describe the countries screen state.
+- Replaced separate local state variables with a single state object.
+- Moved filtered countries calculation into `HomeState`.
+- Prepared screen state structure for future ViewModel refactor.
