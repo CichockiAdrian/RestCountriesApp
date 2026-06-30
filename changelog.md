@@ -34,3 +34,10 @@
 - Replaced separate local state variables with a single state object.
 - Moved filtered countries calculation into `HomeState`.
 - Prepared screen state structure for future ViewModel refactor.
+
+## task/add-home-events
+
+* Added `HomeEvent` to describe user actions on the countries screen.
+* Added events for search changes, country selection and back action.
+* Replaced direct state updates in UI callbacks with centralized event handling.
+* Prepared the screen logic for a future ViewModel and MVI-style refactor.
