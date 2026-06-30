@@ -47,6 +47,12 @@ data class HomeState(
         }
 }
 
+sealed interface HomeEvent {
+    data class SearchChanged(val query: String) : HomeEvent
+    data class CountryClicked(val country: Country) : HomeEvent
+    data object BackClicked : HomeEvent
+}
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,14 +99,30 @@ fun PrimitiveCountriesApp(
         )
     }
 
+    val onEvent: (HomeEvent) -> Unit = { event ->
+        when (event) {
+            is HomeEvent.SearchChanged -> {
+                state = state.copy(searchQuery = event.query)
+            }
+
+            is HomeEvent.CountryClicked -> {
+                state = state.copy(selectedCountry = event.country)
+            }
+
+            is HomeEvent.BackClicked -> {
+                state = state.copy(selectedCountry = null)
+            }
+        }
+    }
+
 
     if (state.selectedCountry == null) {
         CountriesListScreen(
             searchQuery = state.searchQuery,
             countries = state.filteredCountries,
-            onSearchQueryChange = { query -> state = state.copy(searchQuery = query) },
+            onSearchQueryChange = { query -> onEvent(HomeEvent.SearchChanged(query)) },
             onCountryClick = { country ->
-                state = state.copy( selectedCountry = country )
+                onEvent(HomeEvent.CountryClicked(country))
             },
             modifier = modifier
         )
@@ -108,7 +130,7 @@ fun PrimitiveCountriesApp(
         CountryDetailsScreen(
             country = state.selectedCountry!!,
             onBackClick = {
-                state = state.copy(selectedCountry = null)
+                onEvent(HomeEvent.BackClicked)
             },
             modifier = modifier
         )
