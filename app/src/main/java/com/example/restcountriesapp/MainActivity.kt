@@ -26,10 +26,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.HistoricalChange
 import androidx.compose.ui.unit.dp
 import com.example.restcountriesapp.ui.theme.RestCountriesAppTheme
-import java.time.temporal.TemporalQuery
+
+data class Country(
+    val name: String,
+    val capital: String,
+    val region: String,
+    val population: String
+)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,25 +60,25 @@ fun PrimitiveCountriesApp(
     modifier: Modifier = Modifier
 ) {
     val countries = listOf(
-        "Poland",
-        "Germany",
-        "France",
-        "Spain",
-        "Italy",
-        "Portugal",
-        "Norway",
-        "Sweden",
-        "Finland",
-        "Japan",
-        "Brazil",
-        "Canada"
+        Country("Poland", "Warsaw", "Europe", "37M"),
+        Country("Germany", "Berlin", "Europe", "83M"),
+        Country("France", "Paris", "Europe", "68M"),
+        Country("Spain", "Madrid", "Europe", "48M"),
+        Country("Italy", "Rome", "Europe", "59M"),
+        Country("Portugal", "Lisbon", "Europe", "10M"),
+        Country("Norway", "Oslo", "Europe", "5M"),
+        Country("Sweden", "Stockholm", "Europe", "10M"),
+        Country("Finland", "Helsinki", "Europe", "5M"),
+        Country("Japan", "Tokyo", "Asia", "124M"),
+        Country("Brazil", "Brasilia", "South America", "203M"),
+        Country("Canada", "Ottawa", "North America", "40M")
     )
 
     var searchQuery by remember { mutableStateOf("") }
-    var selectedCountry by remember { mutableStateOf<String?>(null) }
+    var selectedCountry by remember { mutableStateOf<Country?>(null) }
 
     val filteredCountries = countries.filter { country ->
-        country.contains(searchQuery, ignoreCase = true)
+        country.name.contains(searchQuery, ignoreCase = true)
     }
     if (selectedCountry == null) {
         CountriesListScreen(
@@ -87,7 +92,7 @@ fun PrimitiveCountriesApp(
         )
     } else {
         CountryDetailsScreen(
-            countryName = selectedCountry!!,
+            country = selectedCountry!!,
             onBackClick = {
                 selectedCountry = null
             },
@@ -99,9 +104,9 @@ fun PrimitiveCountriesApp(
 @Composable
 fun CountriesListScreen(
     searchQuery: String,
-    countries: List<String>,
+    countries: List<Country>,
     onSearchQueryChange: (String) -> Unit,
-    onCountryClick: (String) -> Unit,
+    onCountryClick: (Country) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -152,15 +157,15 @@ fun CountrySearchField(
 
 @Composable
 fun CountriesList(
-    countries: List<String>,
-    onCountryClick: (String) -> Unit
+    countries: List<Country>,
+    onCountryClick: (Country) -> Unit
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(countries) { country ->
             CountryListItem(
-                countryName = country,
+                country = country,
                 onClick = {
                     onCountryClick(country)
                 }
@@ -171,14 +176,16 @@ fun CountriesList(
 
 @Composable
 fun CountryListItem(
-    countryName: String,
+    country: Country,
     onClick: () -> Unit
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
     ) {
         Text(
-            text = countryName,
+            text = country.name,
             modifier = Modifier.padding(16.dp),
             style = MaterialTheme.typography.titleMedium
         )
@@ -186,10 +193,9 @@ fun CountryListItem(
 }
 
 
-
 @Composable
 fun CountryDetailsScreen(
-    countryName: String,
+    country: Country,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -199,13 +205,13 @@ fun CountryDetailsScreen(
             .padding(16.dp)
     ) {
         Text(
-            text = countryName,
+            text = country.name,
             style = MaterialTheme.typography.headlineMedium
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-       CountryDetailsContent(countryName = countryName)
+        CountryDetailsContent(country = country)
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -219,54 +225,9 @@ fun CountryDetailsScreen(
 
 @Composable
 fun CountryDetailsContent(
-    countryName: String
+    country: Country
 ) {
-    Text(text = "Capital: ${getCapital(countryName)}")
-    Text(text = "Region: ${getRegion(countryName)}")
-    Text(text = "Population: ${getPopulation(countryName)}")
-}
-
-fun getCapital(countryName: String): String {
-    return when (countryName) {
-        "Poland" -> "Warsaw"
-        "Germany" -> "Berlin"
-        "France" -> "Paris"
-        "Spain" -> "Madrid"
-        "Italy" -> "Rome"
-        "Portugal" -> "Lisbon"
-        "Norway" -> "Oslo"
-        "Sweden" -> "Stockholm"
-        "Finland" -> "Helsinki"
-        "Japan" -> "Tokyo"
-        "Brazil" -> "Brasilia"
-        "Canada" -> "Ottawa"
-        else -> "Unknown"
-    }
-}
-
-fun getRegion(countryName: String): String {
-    return when (countryName) {
-        "Japan" -> "Asia"
-        "Brazil" -> "South America"
-        "Canada" -> "North America"
-        else -> "Europe"
-    }
-}
-
-fun getPopulation(countryName: String): String {
-    return when (countryName) {
-        "Poland" -> "37M"
-        "Germany" -> "83M"
-        "France" -> "68M"
-        "Spain" -> "48M"
-        "Italy" -> "59M"
-        "Portugal" -> "10M"
-        "Norway" -> "5M"
-        "Sweden" -> "10M"
-        "Finland" -> "5M"
-        "Japan" -> "124M"
-        "Brazil" -> "203M"
-        "Canada" -> "40M"
-        else -> "Unknown"
-    }
+    Text(text = "Capital: ${country.capital}")
+    Text(text = "Region: ${country.region}")
+    Text(text = "Population: ${country.population}")
 }
