@@ -36,6 +36,17 @@ data class Country(
     val population: String
 )
 
+data class HomeState(
+    val countries: List<Country> = emptyList(),
+    val searchQuery: String = "",
+    val selectedCountry: Country? = null
+) {
+    val filteredCountries: List<Country>
+        get() = countries.filter { country ->
+            country.name.contains(searchQuery, ignoreCase = true)
+        }
+}
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,27 +85,30 @@ fun PrimitiveCountriesApp(
         Country("Canada", "Ottawa", "North America", "40M")
     )
 
-    var searchQuery by remember { mutableStateOf("") }
-    var selectedCountry by remember { mutableStateOf<Country?>(null) }
-
-    val filteredCountries = countries.filter { country ->
-        country.name.contains(searchQuery, ignoreCase = true)
+    var state by remember {
+        mutableStateOf(
+            HomeState(
+                countries = countries
+            )
+        )
     }
-    if (selectedCountry == null) {
+
+
+    if (state.selectedCountry == null) {
         CountriesListScreen(
-            searchQuery = searchQuery,
-            countries = filteredCountries,
-            onSearchQueryChange = { searchQuery = it },
+            searchQuery = state.searchQuery,
+            countries = state.filteredCountries,
+            onSearchQueryChange = { query -> state = state.copy(searchQuery = query) },
             onCountryClick = { country ->
-                selectedCountry = country
+                state = state.copy( selectedCountry = country )
             },
             modifier = modifier
         )
     } else {
         CountryDetailsScreen(
-            country = selectedCountry!!,
+            country = state.selectedCountry!!,
             onBackClick = {
-                selectedCountry = null
+                state = state.copy(selectedCountry = null)
             },
             modifier = modifier
         )
