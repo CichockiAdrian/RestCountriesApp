@@ -26,8 +26,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.HistoricalChange
 import androidx.compose.ui.unit.dp
 import com.example.restcountriesapp.ui.theme.RestCountriesAppTheme
+import java.time.temporal.TemporalQuery
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,53 +75,18 @@ fun PrimitiveCountriesApp(
     val filteredCountries = countries.filter { country ->
         country.contains(searchQuery, ignoreCase = true)
     }
-
     if (selectedCountry == null) {
-        Column(
+        CountriesListScreen(
+            searchQuery = searchQuery,
+            countries = filteredCountries,
+            onSearchQueryChange = { searchQuery = it },
+            onCountryClick = { country ->
+                selectedCountry = country
+            },
             modifier = modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            Text(
-                text = "Rest Countries",
-                style = MaterialTheme.typography.headlineMedium
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                modifier = Modifier.fillMaxWidth(),
-                label = {
-                    Text("Search country")
-                }
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(filteredCountries) { country ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                selectedCountry = country
-                            }
-                    ) {
-                        Text(
-                            text = country,
-                            modifier = Modifier.padding(16.dp),
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
-                }
-            }
-        }
+        )
     } else {
-        CountryDetailsPrimitive(
+        CountryDetailsScreen(
             countryName = selectedCountry!!,
             onBackClick = {
                 selectedCountry = null
@@ -130,7 +97,98 @@ fun PrimitiveCountriesApp(
 }
 
 @Composable
-fun CountryDetailsPrimitive(
+fun CountriesListScreen(
+    searchQuery: String,
+    countries: List<String>,
+    onSearchQueryChange: (String) -> Unit,
+    onCountryClick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        CountriesHeader()
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        CountrySearchField(
+            searchQuery = searchQuery,
+            onSearchQueryChange = onSearchQueryChange
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        CountriesList(
+            countries = countries,
+            onCountryClick = onCountryClick
+        )
+    }
+}
+
+@Composable
+fun CountriesHeader() {
+    Text(
+        text = "Rest Countries",
+        style = MaterialTheme.typography.headlineMedium
+    )
+}
+
+@Composable
+fun CountrySearchField(
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit
+) {
+    OutlinedTextField(
+        value = searchQuery,
+        onValueChange = onSearchQueryChange,
+        modifier = Modifier.fillMaxWidth(),
+        label = {
+            Text("Search country")
+        }
+    )
+}
+
+@Composable
+fun CountriesList(
+    countries: List<String>,
+    onCountryClick: (String) -> Unit
+) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(countries) { country ->
+            CountryListItem(
+                countryName = country,
+                onClick = {
+                    onCountryClick(country)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun CountryListItem(
+    countryName: String,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)
+    ) {
+        Text(
+            text = countryName,
+            modifier = Modifier.padding(16.dp),
+            style = MaterialTheme.typography.titleMedium
+        )
+    }
+}
+
+
+
+@Composable
+fun CountryDetailsScreen(
     countryName: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -147,9 +205,7 @@ fun CountryDetailsPrimitive(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Capital: ${getCapital(countryName)}")
-        Text(text = "Region: ${getRegion(countryName)}")
-        Text(text = "Population: ${getPopulation(countryName)}")
+       CountryDetailsContent(countryName = countryName)
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -159,6 +215,15 @@ fun CountryDetailsPrimitive(
             Text("Back")
         }
     }
+}
+
+@Composable
+fun CountryDetailsContent(
+    countryName: String
+) {
+    Text(text = "Capital: ${getCapital(countryName)}")
+    Text(text = "Region: ${getRegion(countryName)}")
+    Text(text = "Population: ${getPopulation(countryName)}")
 }
 
 fun getCapital(countryName: String): String {
