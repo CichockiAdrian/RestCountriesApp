@@ -41,3 +41,11 @@
 * Added events for search changes, country selection and back action.
 * Replaced direct state updates in UI callbacks with centralized event handling.
 * Prepared the screen logic for a future ViewModel and MVI-style refactor.
+
+## task/add-home-viewmodel
+
+- Added `HomeViewModel` for countries screen logic.
+- Moved `HomeState` ownership from composable to ViewModel.
+- Moved `HomeEvent` handling from composable to ViewModel.
+- Exposed screen state with `StateFlow`.
+- Updated Compose UI to observe state and send events to ViewModel.
