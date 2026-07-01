@@ -22,12 +22,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.restcountriesapp.ui.theme.RestCountriesAppTheme
+import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 data class Country(
     val name: String,
@@ -47,36 +49,8 @@ data class HomeState(
         }
 }
 
-sealed interface HomeEvent {
-    data class SearchChanged(val query: String) : HomeEvent
-    data class CountryClicked(val country: Country) : HomeEvent
-    data object BackClicked : HomeEvent
-}
-
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
-        setContent {
-            RestCountriesAppTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                ) { innerPadding ->
-                    PrimitiveCountriesApp(
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun PrimitiveCountriesApp(
-    modifier: Modifier = Modifier
-) {
-    val countries = listOf(
+class HomeViewModel : ViewModel() {
+    private val initialCountries = listOf(
         Country("Poland", "Warsaw", "Europe", "37M"),
         Country("Germany", "Berlin", "Europe", "83M"),
         Country("France", "Paris", "Europe", "68M"),
@@ -91,38 +65,81 @@ fun PrimitiveCountriesApp(
         Country("Canada", "Ottawa", "North America", "40M")
     )
 
-    var state by remember {
-        mutableStateOf(
-            HomeState(
-                countries = countries
-            )
+    private val _state = MutableStateFlow(
+        HomeState(
+            countries = initialCountries
         )
-    }
+    )
 
-    val onEvent: (HomeEvent) -> Unit = { event ->
+    val state = _state.asStateFlow()
+
+    fun onEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.SearchChanged -> {
-                state = state.copy(searchQuery = event.query)
+                _state.update {currentState ->
+                    currentState.copy(searchQuery = event.query)
+                }
             }
 
             is HomeEvent.CountryClicked -> {
-                state = state.copy(selectedCountry = event.country)
+                _state.update { currentState ->
+                    currentState.copy(selectedCountry = event.country)
+                }
             }
 
-            is HomeEvent.BackClicked -> {
-                state = state.copy(selectedCountry = null)
+            HomeEvent.BackClicked -> {
+                _state.update { currentState ->
+                    currentState.copy(selectedCountry = null)
+                }
             }
         }
     }
+}
 
+sealed interface HomeEvent {
+    data class SearchChanged(val query: String) : HomeEvent
+    data class CountryClicked(val country: Country) : HomeEvent
+    data object BackClicked : HomeEvent
+}
+
+class MainActivity : ComponentActivity() {
+    private val homeViewModel = HomeViewModel()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
+        setContent {
+            RestCountriesAppTheme {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
+                    PrimitiveCountriesApp(
+                        modifier = Modifier.padding(innerPadding),
+                        viewModel = homeViewModel
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PrimitiveCountriesApp(
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel
+) {
+
+    val state by viewModel.state.collectAsState()
 
     if (state.selectedCountry == null) {
         CountriesListScreen(
             searchQuery = state.searchQuery,
             countries = state.filteredCountries,
-            onSearchQueryChange = { query -> onEvent(HomeEvent.SearchChanged(query)) },
-            onCountryClick = { country ->
-                onEvent(HomeEvent.CountryClicked(country))
+            onSearchQueryChange = { query ->
+                viewModel.onEvent(HomeEvent.SearchChanged(query))
+            },
+            onCountryClick = {country ->
+                viewModel.onEvent(HomeEvent.CountryClicked(country))
             },
             modifier = modifier
         )
@@ -130,7 +147,7 @@ fun PrimitiveCountriesApp(
         CountryDetailsScreen(
             country = state.selectedCountry!!,
             onBackClick = {
-                onEvent(HomeEvent.BackClicked)
+                viewModel.onEvent(HomeEvent.BackClicked)
             },
             modifier = modifier
         )
