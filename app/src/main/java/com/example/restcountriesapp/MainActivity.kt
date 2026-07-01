@@ -25,11 +25,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.restcountriesapp.ui.theme.RestCountriesAppTheme
-import androidx.compose.runtime.collectAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 data class Country(
     val name: String,
@@ -49,25 +51,34 @@ data class HomeState(
         }
 }
 
-class HomeViewModel : ViewModel() {
-    private val initialCountries = listOf(
-        Country("Poland", "Warsaw", "Europe", "37M"),
-        Country("Germany", "Berlin", "Europe", "83M"),
-        Country("France", "Paris", "Europe", "68M"),
-        Country("Spain", "Madrid", "Europe", "48M"),
-        Country("Italy", "Rome", "Europe", "59M"),
-        Country("Portugal", "Lisbon", "Europe", "10M"),
-        Country("Norway", "Oslo", "Europe", "5M"),
-        Country("Sweden", "Stockholm", "Europe", "10M"),
-        Country("Finland", "Helsinki", "Europe", "5M"),
-        Country("Japan", "Tokyo", "Asia", "124M"),
-        Country("Brazil", "Brasilia", "South America", "203M"),
-        Country("Canada", "Ottawa", "North America", "40M")
-    )
+class CountriesRepository {
+
+    fun getCountries(): List<Country> {
+        return listOf(
+            Country("Poland", "Warsaw", "Europe", "37M"),
+            Country("Germany", "Berlin", "Europe", "83M"),
+            Country("France", "Paris", "Europe", "68M"),
+            Country("Spain", "Madrid", "Europe", "48M"),
+            Country("Italy", "Rome", "Europe", "59M"),
+            Country("Portugal", "Lisbon", "Europe", "10M"),
+            Country("Norway", "Oslo", "Europe", "5M"),
+            Country("Sweden", "Stockholm", "Europe", "10M"),
+            Country("Finland", "Helsinki", "Europe", "5M"),
+            Country("Japan", "Tokyo", "Asia", "124M"),
+            Country("Brazil", "Brasilia", "South America", "203M"),
+            Country("Canada", "Ottawa", "North America", "40M")
+        )
+    }
+}
+
+class HomeViewModel(
+    private val countriesRepository: CountriesRepository
+
+) : ViewModel() {
 
     private val _state = MutableStateFlow(
         HomeState(
-            countries = initialCountries
+            countries = countriesRepository.getCountries()
         )
     )
 
@@ -76,7 +87,7 @@ class HomeViewModel : ViewModel() {
     fun onEvent(event: HomeEvent) {
         when (event) {
             is HomeEvent.SearchChanged -> {
-                _state.update {currentState ->
+                _state.update { currentState ->
                     currentState.copy(searchQuery = event.query)
                 }
             }
@@ -96,6 +107,19 @@ class HomeViewModel : ViewModel() {
     }
 }
 
+class HomeViewModelFactory(
+    private val countriesRepository: CountriesRepository
+) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return HomeViewModel(countriesRepository) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
+}
+
 sealed interface HomeEvent {
     data class SearchChanged(val query: String) : HomeEvent
     data class CountryClicked(val country: Country) : HomeEvent
@@ -103,7 +127,7 @@ sealed interface HomeEvent {
 }
 
 class MainActivity : ComponentActivity() {
-    private val homeViewModel = HomeViewModel()
+    private val countriesRepository = CountriesRepository()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -115,7 +139,7 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     PrimitiveCountriesApp(
                         modifier = Modifier.padding(innerPadding),
-                        viewModel = homeViewModel
+                        countriesRepository = countriesRepository
                     )
                 }
             }
@@ -126,10 +150,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun PrimitiveCountriesApp(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel
+    countriesRepository: CountriesRepository
 ) {
+    val viewModel: HomeViewModel = viewModel(
+        factory = HomeViewModelFactory(countriesRepository)
+    )
 
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     if (state.selectedCountry == null) {
         CountriesListScreen(
@@ -138,7 +165,7 @@ fun PrimitiveCountriesApp(
             onSearchQueryChange = { query ->
                 viewModel.onEvent(HomeEvent.SearchChanged(query))
             },
-            onCountryClick = {country ->
+            onCountryClick = { country ->
                 viewModel.onEvent(HomeEvent.CountryClicked(country))
             },
             modifier = modifier
