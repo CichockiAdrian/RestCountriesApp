@@ -49,3 +49,11 @@
 - Moved `HomeEvent` handling from composable to ViewModel.
 - Exposed screen state with `StateFlow`.
 - Updated Compose UI to observe state and send events to ViewModel.
+
+## task/add-viewmodel-factory
+
+- Added basic `CountriesRepository` for mock country data.
+- Updated `HomeViewModel` to receive dependencies through constructor.
+- Added custom `HomeViewModelFactory`.
+- Replaced manual ViewModel creation with Compose `viewModel(factory = ...)`.
+- Prepared dependency creation flow for future Koin integration.
