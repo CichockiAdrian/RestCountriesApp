@@ -57,3 +57,14 @@
 - Added custom `HomeViewModelFactory`.
 - Replaced manual ViewModel creation with Compose `viewModel(factory = ...)`.
 - Prepared dependency creation flow for future Koin integration.
+
+## task/split-home-files
+
+* Split the previous single-file implementation into separate files.
+* Moved `Country` model to the `model` package.
+* Moved `CountriesRepository` to the `data` package.
+* Moved `HomeState`, `HomeEvent`, `HomeViewModel` and `HomeViewModelFactory` to the `home` package.
+* Added `HomeRoute` to connect `HomeViewModel` with Compose UI.
+* Updated state collection to use `collectAsStateWithLifecycle()`.
+* Kept `HomeScreen` focused on rendering state and sending user events.
+* Improved code readability and separation of responsibilities.
