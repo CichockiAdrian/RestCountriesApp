@@ -5,11 +5,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.restcountriesapp.data.CountriesRepository
+import com.example.restcountriesapp.domain.model.Country
+import com.example.restcountriesapp.domain.repository.CountryRepository
 
 @Composable
 fun HomeRoute(
-    countriesRepository: CountriesRepository,
+    countriesRepository: CountryRepository,
     modifier: Modifier = Modifier
 ) {
     val viewModel: HomeViewModel = viewModel(

@@ -68,3 +68,15 @@
 * Updated state collection to use `collectAsStateWithLifecycle()`.
 * Kept `HomeScreen` focused on rendering state and sending user events.
 * Improved code readability and separation of responsibilities.
+
+## task/rest-countries-api
+
+- Added domain layer with `Country` model and `CountryRepository` interface.
+- Added `DataResult` for success and failure handling.
+- Added Retrofit API interface for REST Countries.
+- Added DTO models for API response.
+- Added mapper from DTO to domain model.
+- Added `CountryRepositoryImpl` as the only class responsible for network data source.
+- Added manual `AppContainer` with Retrofit and OkHttp configured through Builder pattern.
+- Updated `HomeViewModel` to load countries asynchronously from repository.
+- Added loading and error state handling.
