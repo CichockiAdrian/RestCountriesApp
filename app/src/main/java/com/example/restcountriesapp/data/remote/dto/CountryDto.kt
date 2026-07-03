@@ -7,7 +7,16 @@ data class CountriesResponseDto(
 )
 
 data class CountriesDataDto(
-    val objects: List<CountryDto>?
+    val objects: List<CountryDto>?,
+    val meta: CountriesMetaDto?
+)
+
+data class CountriesMetaDto(
+    val total: Int?,
+    val count: Int?,
+    val limit: Int?,
+    val offset: Int?,
+    val more: Boolean?
 )
 
 data class CountryDto(
