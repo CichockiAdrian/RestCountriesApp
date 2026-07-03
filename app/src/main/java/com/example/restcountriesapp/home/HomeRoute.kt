@@ -7,16 +7,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.restcountriesapp.domain.model.Country
 import com.example.restcountriesapp.domain.repository.CountryRepository
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeRoute(
-    countriesRepository: CountryRepository,
     modifier: Modifier = Modifier
 ) {
-    val viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModelFactory(countriesRepository)
-    )
-
+    val viewModel: HomeViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     HomeScreen(
