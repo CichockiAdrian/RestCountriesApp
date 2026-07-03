@@ -18,7 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.restcountriesapp.model.Country
+import com.example.restcountriesapp.domain.model.Country
 
 @Composable
 fun HomeScreen(
@@ -32,11 +32,16 @@ fun HomeScreen(
         CountriesListScreen(
             searchQuery = state.searchQuery,
             countries = state.filteredCountries,
+            isLoading = state.isLoading,
+            errorMessage = state.errorMessage,
             onSearchQueryChange = { query ->
                 onEvent(HomeEvent.SearchChanged(query))
             },
             onCountryClick = { country ->
                 onEvent(HomeEvent.CountryClicked(country))
+            },
+            onRetryClick = {
+                onEvent(HomeEvent.RetryClicked)
             },
             modifier = modifier
         )
@@ -55,8 +60,11 @@ fun HomeScreen(
 fun CountriesListScreen(
     searchQuery: String,
     countries: List<Country>,
+    isLoading: Boolean,
+    errorMessage: String?,
     onSearchQueryChange: (String) -> Unit,
     onCountryClick: (Country) -> Unit,
+    onRetryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -74,6 +82,25 @@ fun CountriesListScreen(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        if (isLoading) {
+            Text(text = "Loading countries...")
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        errorMessage?.let { message ->
+            Text(text = message)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = onRetryClick
+            ) {
+                Text("Retry")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
 
         CountriesList(
             countries = countries,
