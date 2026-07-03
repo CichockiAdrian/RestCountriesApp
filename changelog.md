@@ -80,3 +80,14 @@
 - Added manual `AppContainer` with Retrofit and OkHttp configured through Builder pattern.
 - Updated `HomeViewModel` to load countries asynchronously from repository.
 - Added loading and error state handling.
+
+## task/rest-countries-api
+
+- Added Retrofit integration with REST Countries v5 API.
+- Added OkHttp authorization header using `REST_COUNTRIES_TOKEN` from local configuration.
+- Added DTO models for v5 API response structure.
+- Added mapper from API DTO to domain `Country` model.
+- Added `CountryRepository` abstraction and network implementation.
+- Added `DataResult` for success and error handling.
+- Updated `HomeViewModel` to load countries asynchronously from repository.
+- Added loading, error and retry UI state handling.
