@@ -108,3 +108,11 @@
 - Replaced manual `HomeViewModelFactory` usage with `koinViewModel()`.
 - Removed manual dependency passing from `MainActivity` and `HomeRoute`.
 - Removed `AppContainer` and `HomeViewModelFactory` after migrating dependency injection to Koin.
+
+## task/add-usecase-layer
+
+- Added `GetCountriesUseCase` between `HomeViewModel` and `CountryRepository`.
+- Added Koin `UseCaseModule`.
+- Updated `HomeViewModel` to depend on use case instead of repository.
+- Updated ViewModel dependency injection to provide `GetCountriesUseCase`.
+- Kept existing countries loading and pagination behavior unchanged.
