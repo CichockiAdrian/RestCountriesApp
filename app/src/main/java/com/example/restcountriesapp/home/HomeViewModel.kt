@@ -3,14 +3,14 @@ package com.example.restcountriesapp.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restcountriesapp.core.result.DataResult
-import com.example.restcountriesapp.domain.repository.CountryRepository
+import com.example.restcountriesapp.domain.usecase.GetCountriesUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class HomeViewModel(
-    private val countryRepository: CountryRepository
+    private val getCountriesUseCase: GetCountriesUseCase
 ) : ViewModel() {
 
     private val pageLimit = 25
@@ -83,7 +83,7 @@ class HomeViewModel(
             }
 
             when (
-                val result = countryRepository.getCountries(
+                val result = getCountriesUseCase(
                     limit = pageLimit,
                     offset = offset
                 )
