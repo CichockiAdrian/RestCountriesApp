@@ -98,3 +98,13 @@
 - Added pagination metadata handling with `nextOffset` and `hasMore`.
 - Added `Load more` UI state and next page loading support.
 - Moved home screen UI strings to `strings.xml`.
+
+## task/koinimplementation
+
+- Added Koin dependencies for Android and Jetpack Compose integration.
+- Added `RestCountriesApplication` to start Koin when the app launches.
+- Registered Koin modules for network, repository and ViewModel dependencies.
+- Moved `OkHttpClient`, `Retrofit`, `RestCountriesApi`, `CountryRepository` and `HomeViewModel` creation to Koin modules.
+- Replaced manual `HomeViewModelFactory` usage with `koinViewModel()`.
+- Removed manual dependency passing from `MainActivity` and `HomeRoute`.
+- Removed `AppContainer` and `HomeViewModelFactory` after migrating dependency injection to Koin.
