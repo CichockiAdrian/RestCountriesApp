@@ -7,7 +7,10 @@ data class HomeState(
     val searchQuery: String = "",
     val selectedCountry: Country? = null,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isLoadingNextPage: Boolean = false,
+    val hasMoreCountries: Boolean = true,
+    val nextOffset: Int = 0
 ) {
     val filteredCountries: List<Country>
         get() = countries.filter { country ->

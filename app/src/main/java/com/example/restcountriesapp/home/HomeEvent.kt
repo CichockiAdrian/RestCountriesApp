@@ -8,4 +8,5 @@ sealed interface HomeEvent {
     data class SearchChanged(val query: String) : HomeEvent
     data class CountryClicked(val country: Country) : HomeEvent
     data object BackClicked : HomeEvent
+    data object LoadNextPage : HomeEvent
 }

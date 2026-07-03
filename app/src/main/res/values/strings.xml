@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">RestCountriesApp</string>
+
+    <string name="rest_countries_title">Rest Countries</string>
+    <string name="search_country_label">Search country</string>
+    <string name="loading_countries">Loading countries...</string>
+    <string name="retry">Retry</string>
+    <string name="back">Back</string>
+
+    <string name="country_capital">Capital: %1$s</string>
+    <string name="country_region">Region: %1$s</string>
+    <string name="country_population">Population: %1$s</string>
+
+    <string name="loading_more_countries">Loading more countries...</string>
+    <string name="load_more">Load more</string>
 </resources>

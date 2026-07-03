@@ -91,3 +91,10 @@
 - Added `DataResult` for success and error handling.
 - Updated `HomeViewModel` to load countries asynchronously from repository.
 - Added loading, error and retry UI state handling.
+
+## task/add-pagination
+
+- Added paginated loading of countries using `limit` and `offset`.
+- Added pagination metadata handling with `nextOffset` and `hasMore`.
+- Added `Load more` UI state and next page loading support.
+- Moved home screen UI strings to `strings.xml`.

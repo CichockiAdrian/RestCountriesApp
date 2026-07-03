@@ -8,6 +8,7 @@ interface RestCountriesApi {
 
     @GET("countries/v5")
     suspend fun getCountries(
-        @Query("limit") limit: Int = 100
+        @Query("limit") limit: Int = 25,
+        @Query("offset") offset: Int = 0
     ): CountriesResponseDto
 }

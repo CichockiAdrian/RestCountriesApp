@@ -17,7 +17,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.restcountriesapp.R
 import com.example.restcountriesapp.domain.model.Country
 
 @Composable
@@ -34,6 +36,8 @@ fun HomeScreen(
             countries = state.filteredCountries,
             isLoading = state.isLoading,
             errorMessage = state.errorMessage,
+            isLoadingNextPage = state.isLoadingNextPage,
+            hasMoreCountries = state.hasMoreCountries,
             onSearchQueryChange = { query ->
                 onEvent(HomeEvent.SearchChanged(query))
             },
@@ -42,6 +46,9 @@ fun HomeScreen(
             },
             onRetryClick = {
                 onEvent(HomeEvent.RetryClicked)
+            },
+            onLoadNextPage = {
+                onEvent(HomeEvent.LoadNextPage)
             },
             modifier = modifier
         )
@@ -62,9 +69,12 @@ fun CountriesListScreen(
     countries: List<Country>,
     isLoading: Boolean,
     errorMessage: String?,
+    isLoadingNextPage: Boolean,
+    hasMoreCountries: Boolean,
     onSearchQueryChange: (String) -> Unit,
     onCountryClick: (Country) -> Unit,
     onRetryClick: () -> Unit,
+    onLoadNextPage: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -84,7 +94,7 @@ fun CountriesListScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (isLoading) {
-            Text(text = "Loading countries...")
+            Text(text = stringResource(R.string.loading_countries))
             Spacer(modifier = Modifier.height(16.dp))
         }
 
@@ -96,7 +106,7 @@ fun CountriesListScreen(
             Button(
                 onClick = onRetryClick
             ) {
-                Text("Retry")
+                Text(stringResource(R.string.retry))
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -104,7 +114,10 @@ fun CountriesListScreen(
 
         CountriesList(
             countries = countries,
-            onCountryClick = onCountryClick
+            isLoadingNextPage = isLoadingNextPage,
+            hasMoreCountries = hasMoreCountries,
+            onCountryClick = onCountryClick,
+            onLoadNextPage = onLoadNextPage
         )
     }
 }
@@ -112,7 +125,7 @@ fun CountriesListScreen(
 @Composable
 fun CountriesHeader() {
     Text(
-        text = "Rest Countries",
+        text = stringResource(R.string.rest_countries_title),
         style = MaterialTheme.typography.headlineMedium
     )
 }
@@ -127,7 +140,7 @@ fun CountrySearchField(
         onValueChange = onSearchQueryChange,
         modifier = Modifier.fillMaxWidth(),
         label = {
-            Text("Search country")
+            Text(stringResource(R.string.search_country_label))
         }
     )
 }
@@ -135,7 +148,10 @@ fun CountrySearchField(
 @Composable
 fun CountriesList(
     countries: List<Country>,
-    onCountryClick: (Country) -> Unit
+    isLoadingNextPage: Boolean,
+    hasMoreCountries: Boolean,
+    onCountryClick: (Country) -> Unit,
+    onLoadNextPage: () -> Unit
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -147,6 +163,24 @@ fun CountriesList(
                     onCountryClick(country)
                 }
             )
+        }
+
+        item {
+            if (isLoadingNextPage) {
+                Text(
+                    text = stringResource(R.string.loading_more_countries),
+                    modifier = Modifier.padding(16.dp)
+                )
+            } else if (hasMoreCountries) {
+                Button(
+                    onClick = onLoadNextPage,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp)
+                ) {
+                    Text(stringResource(R.string.load_more))
+                }
+            }
         }
     }
 }
@@ -194,7 +228,7 @@ fun CountryDetailsScreen(
         Button(
             onClick = onBackClick
         ) {
-            Text("Back")
+            Text(stringResource(R.string.back))
         }
     }
 }
@@ -203,7 +237,7 @@ fun CountryDetailsScreen(
 fun CountryDetailsContent(
     country: Country
 ) {
-    Text(text = "Capital: ${country.capital}")
-    Text(text = "Region: ${country.region}")
-    Text(text = "Population: ${country.population}")
+    Text(text = stringResource(R.string.country_capital, country.capital))
+    Text(text = stringResource(R.string.country_region, country.region))
+    Text(text = stringResource(R.string.country_population, country.population.toString()))
 }
