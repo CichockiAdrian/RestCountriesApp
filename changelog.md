@@ -116,3 +116,10 @@
 - Updated `HomeViewModel` to depend on use case instead of repository.
 - Updated ViewModel dependency injection to provide `GetCountriesUseCase`.
 - Kept existing countries loading and pagination behavior unchanged.
+
+## task/implement-unit-tests
+
+- Implemented unit tests for `GetCountriesUseCase` to verify repository response forwarding (success and failure scenarios).
+- Implemented unit tests for `HomeViewModel` to verify state transitions during country list loading (success, failure, loading, and error states).
+- Created `FakeCountryRepository` test double to mock repository data sources.
+- Configured `MainDispatcherRule` to properly manage and reset the `Dispatchers.Main` coroutine context during testing.

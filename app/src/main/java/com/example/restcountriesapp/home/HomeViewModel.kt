@@ -56,7 +56,7 @@ class HomeViewModel(
         }
     }
 
-    private fun loadCountries(refresh: Boolean) {
+    fun loadCountries(refresh: Boolean = false) {
         val currentState = _state.value
 
         if (currentState.isLoading || currentState.isLoadingNextPage) return
