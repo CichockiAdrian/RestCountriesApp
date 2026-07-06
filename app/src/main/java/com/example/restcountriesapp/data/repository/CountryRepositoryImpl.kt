@@ -5,6 +5,7 @@ import com.example.restcountriesapp.data.mapper.toCountry
 import com.example.restcountriesapp.data.remote.RestCountriesApi
 import com.example.restcountriesapp.domain.model.CountriesPage
 import com.example.restcountriesapp.domain.repository.CountryRepository
+import kotlinx.coroutines.CancellationException
 
 class CountryRepositoryImpl(
     private val api: RestCountriesApi
@@ -12,12 +13,14 @@ class CountryRepositoryImpl(
 
     override suspend fun getCountries(
         limit: Int,
-        offset: Int
+        offset: Int,
+        query: String?
     ): DataResult<CountriesPage> {
         return try {
             val response = api.getCountries(
                 limit = limit,
-                offset = offset
+                offset = offset,
+                query = query?.takeIf { it.isNotBlank() }
             )
 
             val countries = response.data
@@ -39,6 +42,8 @@ class CountryRepositoryImpl(
                     hasMore = hasMore
                 )
             )
+        } catch (e: CancellationException) {
+            throw e
         } catch (exception: Exception) {
             DataResult.Failure(
                 message = exception.message ?: "Unknown error"

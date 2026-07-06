@@ -22,7 +22,8 @@ class FakeCountryRepository : CountryRepository {
 
     override suspend fun getCountries(
         limit: Int,
-        offset: Int
+        offset: Int,
+        query: String?
     ): DataResult<CountriesPage> {
         return result
     }

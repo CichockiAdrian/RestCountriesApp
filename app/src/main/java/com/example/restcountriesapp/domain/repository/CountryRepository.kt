@@ -6,6 +6,7 @@ import com.example.restcountriesapp.domain.model.CountriesPage
 interface CountryRepository {
     suspend fun getCountries(
         limit: Int = 25,
-        offset: Int = 0
+        offset: Int = 0,
+        query: String? = null
     ): DataResult<CountriesPage>
 }

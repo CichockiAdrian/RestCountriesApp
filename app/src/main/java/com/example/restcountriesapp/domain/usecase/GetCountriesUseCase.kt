@@ -9,11 +9,13 @@ class GetCountriesUseCase(
 ) {
     suspend operator fun invoke(
         limit: Int,
-        offset: Int
+        offset: Int,
+        query: String? = null
     ): DataResult<CountriesPage> {
         return countryRepository.getCountries(
             limit = limit,
-            offset = offset
+            offset = offset,
+            query = query
         )
     }
 }

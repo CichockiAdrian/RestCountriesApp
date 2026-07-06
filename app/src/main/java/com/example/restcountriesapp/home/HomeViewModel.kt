@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restcountriesapp.core.result.DataResult
 import com.example.restcountriesapp.domain.usecase.GetCountriesUseCase
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -14,9 +16,13 @@ class HomeViewModel(
 ) : ViewModel() {
 
     private val pageLimit = 25
+    private val searchDebounceMs = 500L
 
     private val _state = MutableStateFlow(HomeState())
     val state = _state.asStateFlow()
+
+    private var fetchJob: Job? = null
+    private var searchDebounceJob: Job? = null
 
     init {
         loadCountries(refresh = true)
@@ -40,6 +46,20 @@ class HomeViewModel(
                 _state.update { currentState ->
                     currentState.copy(searchQuery = event.query)
                 }
+                searchDebounceJob?.cancel()
+                if (event.query.isBlank()) {
+                    loadCountries(refresh = true)
+                } else {
+                    searchDebounceJob = viewModelScope.launch {
+                        delay(searchDebounceMs)
+                        loadCountries(refresh = true)
+                    }
+                }
+            }
+
+            HomeEvent.SearchSubmitted -> {
+                searchDebounceJob?.cancel()
+                loadCountries(refresh = true)
             }
 
             is HomeEvent.CountryClicked -> {
@@ -59,12 +79,18 @@ class HomeViewModel(
     fun loadCountries(refresh: Boolean = false) {
         val currentState = _state.value
 
-        if (currentState.isLoading || currentState.isLoadingNextPage) return
         if (!refresh && !currentState.hasMoreCountries) return
 
-        viewModelScope.launch {
-            val offset = if (refresh) 0 else currentState.nextOffset
+        if (refresh) {
+            fetchJob?.cancel()
+        } else {
+            if (currentState.isLoading || currentState.isLoadingNextPage) return
+        }
 
+        val query = currentState.searchQuery
+        val offset = if (refresh) 0 else currentState.nextOffset
+
+        fetchJob = viewModelScope.launch {
             _state.update { state ->
                 if (refresh) {
                     state.copy(
@@ -85,7 +111,8 @@ class HomeViewModel(
             when (
                 val result = getCountriesUseCase(
                     limit = pageLimit,
-                    offset = offset
+                    offset = offset,
+                    query = query.takeIf { it.isNotBlank() }
                 )
             ) {
                 is DataResult.Success -> {

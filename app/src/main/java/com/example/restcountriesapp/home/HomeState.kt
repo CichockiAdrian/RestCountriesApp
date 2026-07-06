@@ -13,7 +13,15 @@ data class HomeState(
     val nextOffset: Int = 0
 ) {
     val filteredCountries: List<Country>
-        get() = countries.filter { country ->
-            country.name.contains(searchQuery, ignoreCase = true)
+        get() {
+            val query = searchQuery.trim()
+            if (query.isBlank()) return countries
+            return countries.sortedBy { country ->
+                when {
+                    country.name.startsWith(query, ignoreCase = true) -> 0
+                    country.name.contains(query, ignoreCase = true) -> 1
+                    else -> 2
+                }
+            }
         }
 }
