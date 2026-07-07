@@ -1,9 +1,11 @@
-package com.example.restcountriesapp.home
+package com.example.restcountriesapp.countries
 
 import com.example.restcountriesapp.core.result.DataResult
 import com.example.restcountriesapp.domain.model.CountriesPage
 import com.example.restcountriesapp.domain.model.Country
 import com.example.restcountriesapp.domain.usecase.GetCountriesUseCase
+import com.example.restcountriesapp.feature.countries.CountriesEvent
+import com.example.restcountriesapp.feature.countries.CountriesViewModel
 import com.example.restcountriesapp.testdoubles.FakeCountryRepository
 import com.example.restcountriesapp.util.MainDispatcherRule
 import kotlinx.coroutines.test.*

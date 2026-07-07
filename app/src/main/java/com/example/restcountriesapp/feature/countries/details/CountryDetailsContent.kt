@@ -1,4 +1,4 @@
-package com.example.restcountriesapp.home
+package com.example.restcountriesapp.feature.countries.details
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,7 +16,7 @@ import com.example.restcountriesapp.R
 import com.example.restcountriesapp.domain.model.Country
 
 @Composable
-fun CountryDetailsScreen(
+fun CountryDetailsContent(
     country: Country,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -33,21 +33,14 @@ fun CountryDetailsScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        CountryDetailsContent(country = country)
+        Text(text = stringResource(R.string.country_capital, country.capital))
+        Text(text = stringResource(R.string.country_region, country.region))
+        Text(text = stringResource(R.string.country_population, country.population.toString()))
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(onClick = onBackClick) {
-            Text(stringResource(R.string.back))
+            Text(text = stringResource(R.string.back))
         }
     }
-}
-
-@Composable
-fun CountryDetailsContent(
-    country: Country
-) {
-    Text(text = stringResource(R.string.country_capital, country.capital))
-    Text(text = stringResource(R.string.country_region, country.region))
-    Text(text = stringResource(R.string.country_population, country.population.toString()))
 }

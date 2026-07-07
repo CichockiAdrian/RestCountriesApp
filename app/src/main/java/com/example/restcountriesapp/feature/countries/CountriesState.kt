@@ -1,4 +1,4 @@
-package com.example.restcountriesapp.home
+package com.example.restcountriesapp.feature.countries
 
 import com.example.restcountriesapp.domain.model.Country
 
@@ -15,13 +15,15 @@ data class CountriesState(
     val filteredCountries: List<Country>
         get() {
             val query = searchQuery.trim()
+
             if (query.isBlank()) return countries
-            return countries.sortedBy { country ->
-                when {
-                    country.name.startsWith(query, ignoreCase = true) -> 0
-                    country.name.contains(query, ignoreCase = true) -> 1
-                    else -> 2
+
+            return countries
+                .filter { country ->
+                    country.name.contains(query, ignoreCase = true)
                 }
-            }
+                .sortedBy { country ->
+                    if (country.name.startsWith(query, ignoreCase = true)) 0 else 1
+                }
         }
 }

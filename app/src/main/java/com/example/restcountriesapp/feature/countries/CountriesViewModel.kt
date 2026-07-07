@@ -1,4 +1,4 @@
-package com.example.restcountriesapp.home
+package com.example.restcountriesapp.feature.countries
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -46,7 +46,9 @@ class CountriesViewModel(
                 _state.update { currentState ->
                     currentState.copy(searchQuery = event.query)
                 }
+
                 searchDebounceJob?.cancel()
+
                 if (event.query.isBlank()) {
                     loadCountries(refresh = true)
                 } else {
