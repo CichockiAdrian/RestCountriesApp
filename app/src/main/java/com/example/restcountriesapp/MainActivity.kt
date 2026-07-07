@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.example.restcountriesapp.ui.theme.RestCountriesAppTheme
-import com.example.restcountriesapp.feature.countries.HomeRoute
+import com.example.restcountriesapp.feature.countries.CountriesRoute
 
 class MainActivity : ComponentActivity() {
 
@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     modifier = Modifier.fillMaxSize()
                 ) { innerPadding ->
-                    HomeRoute(
+                    CountriesRoute(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }

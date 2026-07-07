@@ -57,38 +57,39 @@ fun CountriesScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (state.isLoading) {
-            Text(text = stringResource(R.string.loading_countries))
-            Spacer(modifier = Modifier.height(16.dp))
-        }
+        when {
+            state.isLoading -> {
+                Text(text = stringResource(R.string.loading_countries))
+            }
 
-        state.errorMessage?.let { message ->
-            Text(text = message)
+            state.errorMessage != null -> {
+                Text(text = state.errorMessage)
 
-            Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-            Button(
-                onClick = {
-                    onEvent(CountriesEvent.RetryClicked)
+                Button(
+                    onClick = {
+                        onEvent(CountriesEvent.RetryClicked)
+                    }
+                ) {
+                    Text(text = stringResource(R.string.retry))
                 }
-            ) {
-                Text(text = stringResource(R.string.retry))
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            else -> {
+                CountriesList(
+                    countries = state.filteredCountries,
+                    isLoadingNextPage = state.isLoadingNextPage,
+                    hasMoreCountries = state.hasMoreCountries,
+                    onCountryClick = { country ->
+                        onEvent(CountriesEvent.CountryClicked(country))
+                    },
+                    onLoadNextPage = {
+                        onEvent(CountriesEvent.LoadNextPage)
+                    }
+                )
+            }
         }
-
-        CountriesList(
-            countries = state.filteredCountries,
-            isLoadingNextPage = state.isLoadingNextPage,
-            hasMoreCountries = state.hasMoreCountries,
-            onCountryClick = { country ->
-                onEvent(CountriesEvent.CountryClicked(country))
-            },
-            onLoadNextPage = {
-                onEvent(CountriesEvent.LoadNextPage)
-            }
-        )
     }
 }
 
