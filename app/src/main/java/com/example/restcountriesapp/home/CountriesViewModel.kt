@@ -11,14 +11,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class HomeViewModel(
+class CountriesViewModel(
     private val getCountriesUseCase: GetCountriesUseCase
 ) : ViewModel() {
 
     private val pageLimit = 25
     private val searchDebounceMs = 500L
 
-    private val _state = MutableStateFlow(HomeState())
+    private val _state = MutableStateFlow(CountriesState())
     val state = _state.asStateFlow()
 
     private var fetchJob: Job? = null
@@ -28,21 +28,21 @@ class HomeViewModel(
         loadCountries(refresh = true)
     }
 
-    fun onEvent(event: HomeEvent) {
+    fun onEvent(event: CountriesEvent) {
         when (event) {
-            HomeEvent.LoadCountries -> {
+            CountriesEvent.LoadCountries -> {
                 loadCountries(refresh = true)
             }
 
-            HomeEvent.RetryClicked -> {
+            CountriesEvent.RetryClicked -> {
                 loadCountries(refresh = true)
             }
 
-            HomeEvent.LoadNextPage -> {
+            CountriesEvent.LoadNextPage -> {
                 loadCountries(refresh = false)
             }
 
-            is HomeEvent.SearchChanged -> {
+            is CountriesEvent.SearchChanged -> {
                 _state.update { currentState ->
                     currentState.copy(searchQuery = event.query)
                 }
@@ -57,18 +57,18 @@ class HomeViewModel(
                 }
             }
 
-            HomeEvent.SearchSubmitted -> {
+            CountriesEvent.SearchSubmitted -> {
                 searchDebounceJob?.cancel()
                 loadCountries(refresh = true)
             }
 
-            is HomeEvent.CountryClicked -> {
+            is CountriesEvent.CountryClicked -> {
                 _state.update { currentState ->
                     currentState.copy(selectedCountry = event.country)
                 }
             }
 
-            HomeEvent.BackClicked -> {
+            CountriesEvent.BackClicked -> {
                 _state.update { currentState ->
                     currentState.copy(selectedCountry = null)
                 }

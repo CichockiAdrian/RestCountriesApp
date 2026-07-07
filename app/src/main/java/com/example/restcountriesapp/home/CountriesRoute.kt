@@ -10,7 +10,7 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeRoute(
     modifier: Modifier = Modifier
 ) {
-    val viewModel: HomeViewModel = koinViewModel()
+    val viewModel: CountriesViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     HomeScreen(

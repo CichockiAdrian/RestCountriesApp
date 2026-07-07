@@ -2,7 +2,7 @@ package com.example.restcountriesapp.home
 
 import com.example.restcountriesapp.domain.model.Country
 
-data class HomeState(
+data class CountriesState(
     val countries: List<Country> = emptyList(),
     val searchQuery: String = "",
     val selectedCountry: Country? = null,

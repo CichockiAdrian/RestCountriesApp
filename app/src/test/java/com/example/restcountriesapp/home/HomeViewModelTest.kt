@@ -20,7 +20,7 @@ class HomeViewModelTest {
 
     private lateinit var repository: FakeCountryRepository
     private lateinit var useCase: GetCountriesUseCase
-    private lateinit var viewModel: HomeViewModel
+    private lateinit var viewModel: CountriesViewModel
 
     @Before
     fun setup() {
@@ -41,7 +41,7 @@ class HomeViewModelTest {
         )
 
         //when
-        viewModel = HomeViewModel(useCase)
+        viewModel = CountriesViewModel(useCase)
         advanceUntilIdle()
 
         //then
@@ -59,7 +59,7 @@ class HomeViewModelTest {
         )
 
         //when
-        viewModel = HomeViewModel(useCase)
+        viewModel = CountriesViewModel(useCase)
         advanceUntilIdle()
 
         //then
@@ -74,11 +74,11 @@ class HomeViewModelTest {
     fun `should update searchQuery state immediately when SearchChanged is received`() = runTest {
         //given
         repository.setResult(DataResult.Success(CountriesPage(emptyList(), 0, false)))
-        viewModel = HomeViewModel(useCase)
+        viewModel = CountriesViewModel(useCase)
         advanceUntilIdle()
 
         //when
-        viewModel.onEvent(HomeEvent.SearchChanged("Poland"))
+        viewModel.onEvent(CountriesEvent.SearchChanged("Poland"))
 
         //then
         assertEquals("Poland", viewModel.state.value.searchQuery)
@@ -89,11 +89,11 @@ class HomeViewModelTest {
         //given
         val countries = listOf(Country(name = "Poland", capital = "Warsaw", region = "Europe", population = 37000000, code = "PL", flagUrl = null, latitude = null, longitude = null))
         repository.setResult(DataResult.Success(CountriesPage(countries, 1, false)))
-        viewModel = HomeViewModel(useCase)
+        viewModel = CountriesViewModel(useCase)
         advanceUntilIdle()
 
         //when - send search event and advance past debounce delay (500ms)
-        viewModel.onEvent(HomeEvent.SearchChanged("Poland"))
+        viewModel.onEvent(CountriesEvent.SearchChanged("Poland"))
         advanceTimeBy(600)
         advanceUntilIdle()
 
@@ -109,7 +109,7 @@ class HomeViewModelTest {
         //given
         val initialPage = CountriesPage(emptyList(), 0, false)
         repository.setResult(DataResult.Success(initialPage))
-        viewModel = HomeViewModel(useCase)
+        viewModel = CountriesViewModel(useCase)
         advanceUntilIdle()
 
         val afterSearchPage = CountriesPage(
@@ -118,7 +118,7 @@ class HomeViewModelTest {
         repository.setResult(DataResult.Success(afterSearchPage))
 
         //when - send search event but advance less than debounce delay
-        viewModel.onEvent(HomeEvent.SearchChanged("Poland"))
+        viewModel.onEvent(CountriesEvent.SearchChanged("Poland"))
         advanceTimeBy(300)
 
         //then - countries should NOT be reloaded yet (still empty)
@@ -131,13 +131,13 @@ class HomeViewModelTest {
         //given
         val countries = listOf(Country(name = "Poland", capital = "Warsaw", region = "Europe", population = 37000000, code = "PL", flagUrl = null, latitude = null, longitude = null))
         repository.setResult(DataResult.Success(CountriesPage(countries, 1, false)))
-        viewModel = HomeViewModel(useCase)
+        viewModel = CountriesViewModel(useCase)
         advanceUntilIdle()
 
-        viewModel.onEvent(HomeEvent.SearchChanged("Poland"))
+        viewModel.onEvent(CountriesEvent.SearchChanged("Poland"))
 
         //when - submit immediately without waiting for debounce
-        viewModel.onEvent(HomeEvent.SearchSubmitted)
+        viewModel.onEvent(CountriesEvent.SearchSubmitted)
         advanceUntilIdle()
 
         //then
@@ -155,7 +155,7 @@ class HomeViewModelTest {
             hasMore = true
         )
         repository.setResult(DataResult.Success(firstPage))
-        viewModel = HomeViewModel(useCase)
+        viewModel = CountriesViewModel(useCase)
         advanceUntilIdle()
         assertEquals(1, viewModel.state.value.countries.size)
 
@@ -166,7 +166,7 @@ class HomeViewModelTest {
             hasMore = false
         )
         repository.setResult(DataResult.Success(searchPage))
-        viewModel.onEvent(HomeEvent.SearchChanged("Poland"))
+        viewModel.onEvent(CountriesEvent.SearchChanged("Poland"))
         advanceTimeBy(600)
         advanceUntilIdle()
 

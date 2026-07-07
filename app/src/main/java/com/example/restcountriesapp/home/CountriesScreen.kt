@@ -5,8 +5,8 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun HomeScreen(
-    state: HomeState,
-    onEvent: (HomeEvent) -> Unit,
+    state: CountriesState,
+    onEvent: (CountriesEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val selectedCountry = state.selectedCountry
@@ -20,19 +20,19 @@ fun HomeScreen(
             isLoadingNextPage = state.isLoadingNextPage,
             hasMoreCountries = state.hasMoreCountries,
             onSearchQueryChange = { query ->
-                onEvent(HomeEvent.SearchChanged(query))
+                onEvent(CountriesEvent.SearchChanged(query))
             },
             onSearchTriggered = {
-                onEvent(HomeEvent.SearchSubmitted)
+                onEvent(CountriesEvent.SearchSubmitted)
             },
             onCountryClick = { country ->
-                onEvent(HomeEvent.CountryClicked(country))
+                onEvent(CountriesEvent.CountryClicked(country))
             },
             onRetryClick = {
-                onEvent(HomeEvent.RetryClicked)
+                onEvent(CountriesEvent.RetryClicked)
             },
             onLoadNextPage = {
-                onEvent(HomeEvent.LoadNextPage)
+                onEvent(CountriesEvent.LoadNextPage)
             },
             modifier = modifier
         )
@@ -40,7 +40,7 @@ fun HomeScreen(
         CountryDetailsScreen(
             country = selectedCountry,
             onBackClick = {
-                onEvent(HomeEvent.BackClicked)
+                onEvent(CountriesEvent.BackClicked)
             },
             modifier = modifier
         )
