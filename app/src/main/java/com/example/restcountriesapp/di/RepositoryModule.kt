@@ -5,8 +5,10 @@ import com.example.restcountriesapp.domain.repository.CountryRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
-
     single<CountryRepository> {
-        CountryRepositoryImpl(api = get())
+        CountryRepositoryImpl(
+            api = get(),
+            countryDao = get()
+        )
     }
 }
