@@ -149,3 +149,14 @@
 - Updated repository contract with `getCountryByCode`.
 - Updated fake repository for tests.
 - Prepared the details flow for a future offline-first implementation.
+
+## task/offline-first-room
+
+- Added Room database for local countries cache.
+- Added `CountryEntity`, `CountryDao` and `RestCountriesDatabase`.
+- Added mapper between domain `Country` and local `CountryEntity`.
+- Registered Room database and DAO in Koin.
+- Updated repository to save API results into local database.
+- Added fallback to cached countries when API loading fails.
+- Added cached country details loading by country code.
+- Prepared the data layer for a fuller offline-first single source of truth implementation.
