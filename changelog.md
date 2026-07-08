@@ -130,3 +130,12 @@
 - Improved error rendering so the countries list and `Load more` button are not displayed while an error is shown.
 - Verified that REST Countries v5 API configuration, authorization header and manifest internet permissions are set correctly.
 - Identified current API loading issue as an emulator DNS resolution problem, not an application architecture or Retrofit configuration issue.
+
+## task/nav3-navigation
+
+- Added Navigation 3 runtime and UI dependencies.
+- Added navigation keys for countries list and country details.
+- Replaced selected-country conditional screen switching with a Navigation 3 back stack.
+- Added `NavDisplay` to render countries list and country details entries.
+- Navigated to country details using the selected country code.
+- Added back navigation from country details to the countries list.

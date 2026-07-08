@@ -10,6 +10,4 @@ sealed interface CountriesEvent {
     data class SearchChanged(val query: String) : CountriesEvent
     data object SearchSubmitted : CountriesEvent
 
-    data class CountryClicked(val country: Country) : CountriesEvent
-    data object BackClicked : CountriesEvent
 }

@@ -5,7 +5,6 @@ import com.example.restcountriesapp.domain.model.Country
 data class CountriesState(
     val countries: List<Country> = emptyList(),
     val searchQuery: String = "",
-    val selectedCountry: Country? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val isLoadingNextPage: Boolean = false,

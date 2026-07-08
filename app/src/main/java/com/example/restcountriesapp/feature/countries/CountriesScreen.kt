@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.restcountriesapp.R
-import com.example.restcountriesapp.feature.countries.details.CountryDetailsContent
+import com.example.restcountriesapp.domain.model.Country
 import com.example.restcountriesapp.feature.countries.list.CountriesList
 import com.example.restcountriesapp.feature.countries.list.CountrySearchField
 
@@ -21,21 +21,9 @@ import com.example.restcountriesapp.feature.countries.list.CountrySearchField
 fun CountriesScreen(
     state: CountriesState,
     onEvent: (CountriesEvent) -> Unit,
+    onCountryClick: (Country) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val selectedCountry = state.selectedCountry
-
-    if (selectedCountry != null) {
-        CountryDetailsContent(
-            country = selectedCountry,
-            onBackClick = {
-                onEvent(CountriesEvent.BackClicked)
-            },
-            modifier = modifier
-        )
-        return
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -82,7 +70,7 @@ fun CountriesScreen(
                     isLoadingNextPage = state.isLoadingNextPage,
                     hasMoreCountries = state.hasMoreCountries,
                     onCountryClick = { country ->
-                        onEvent(CountriesEvent.CountryClicked(country))
+                        onCountryClick(country)
                     },
                     onLoadNextPage = {
                         onEvent(CountriesEvent.LoadNextPage)

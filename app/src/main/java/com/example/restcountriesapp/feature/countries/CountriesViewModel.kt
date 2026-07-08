@@ -63,18 +63,6 @@ class CountriesViewModel(
                 searchDebounceJob?.cancel()
                 loadCountries(refresh = true)
             }
-
-            is CountriesEvent.CountryClicked -> {
-                _state.update { currentState ->
-                    currentState.copy(selectedCountry = event.country)
-                }
-            }
-
-            CountriesEvent.BackClicked -> {
-                _state.update { currentState ->
-                    currentState.copy(selectedCountry = null)
-                }
-            }
         }
     }
 
