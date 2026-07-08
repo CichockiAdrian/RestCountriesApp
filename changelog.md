@@ -139,3 +139,13 @@
 - Added `NavDisplay` to render countries list and country details entries.
 - Navigated to country details using the selected country code.
 - Added back navigation from country details to the countries list.
+
+## task/country-details-viewmodel
+
+- Added `GetCountryByCodeUseCase` for loading a single country by code.
+- Added `CountryDetailsState` and `CountryDetailsViewModel`.
+- Added `CountryDetailsRoute` to connect Navigation 3 details screen with ViewModel state.
+- Moved country details loading away from the countries list state.
+- Updated repository contract with `getCountryByCode`.
+- Updated fake repository for tests.
+- Prepared the details flow for a future offline-first implementation.
