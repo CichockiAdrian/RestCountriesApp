@@ -13,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.example.restcountriesapp.feature.countries.details.CountryDetailsContent
+import com.example.restcountriesapp.feature.countries.details.CountryDetailsRoute
 import com.example.restcountriesapp.feature.countries.navigation.CountriesListKey
 import com.example.restcountriesapp.feature.countries.navigation.CountryDetailsKey
 import org.koin.androidx.compose.koinViewModel
@@ -56,26 +57,15 @@ fun CountriesRoute(
 
                 is CountryDetailsKey -> {
                     NavEntry(key) {
-                        val country = state.countries.firstOrNull { country ->
-                            country.code == key.countryCode
-                        }
-
-                        if (country == null) {
-                            MissingCountryContent(
-                                onBackClick = {
-                                    backStack.removeLastOrNull()
-                                },
-                                modifier = modifier
-                            )
-                        } else {
-                            CountryDetailsContent(
-                                country = country,
-                                onBackClick = {
-                                    backStack.removeLastOrNull()
-                                },
-                                modifier = modifier
-                            )
-                        }
+                        CountryDetailsRoute(
+                            countryCode = key.countryCode,
+                            onBackClick = {
+                                if (backStack.size > 1) {
+                                    backStack.removeAt(backStack.lastIndex)
+                                }
+                            },
+                            modifier = modifier
+                        )
                     }
                 }
 

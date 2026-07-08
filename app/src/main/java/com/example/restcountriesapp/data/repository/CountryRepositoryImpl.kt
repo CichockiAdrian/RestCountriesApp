@@ -6,6 +6,7 @@ import com.example.restcountriesapp.data.remote.RestCountriesApi
 import com.example.restcountriesapp.domain.model.CountriesPage
 import com.example.restcountriesapp.domain.repository.CountryRepository
 import kotlinx.coroutines.CancellationException
+import com.example.restcountriesapp.domain.model.Country
 
 class CountryRepositoryImpl(
     private val api: RestCountriesApi
@@ -48,6 +49,32 @@ class CountryRepositoryImpl(
             DataResult.Failure(
                 message = exception.message ?: "Unknown error"
             )
+        }
+    }
+
+    override suspend fun getCountryByCode(code: String): DataResult<Country> {
+        return when (
+            val result = getCountries(
+                limit = 250,
+                offset = 0,
+                query = null
+            )
+        ) {
+            is DataResult.Success -> {
+                val country = result.data.countries.firstOrNull { country ->
+                    country.code.equals(code, ignoreCase = true)
+                }
+
+                if (country != null) {
+                    DataResult.Success(country)
+                } else {
+                    DataResult.Failure("Country not found")
+                }
+            }
+
+            is DataResult.Failure -> {
+                DataResult.Failure(result.message)
+            }
         }
     }
 }
