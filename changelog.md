@@ -69,17 +69,6 @@
 * Kept `HomeScreen` focused on rendering state and sending user events.
 * Improved code readability and separation of responsibilities.
 
-## task/rest-countries-api
-
-- Added domain layer with `Country` model and `CountryRepository` interface.
-- Added `DataResult` for success and failure handling.
-- Added Retrofit API interface for REST Countries.
-- Added DTO models for API response.
-- Added mapper from DTO to domain model.
-- Added `CountryRepositoryImpl` as the only class responsible for network data source.
-- Added manual `AppContainer` with Retrofit and OkHttp configured through Builder pattern.
-- Updated `HomeViewModel` to load countries asynchronously from repository.
-- Added loading and error state handling.
 
 ## task/rest-countries-api
 
@@ -123,3 +112,21 @@
 - Implemented unit tests for `HomeViewModel` to verify state transitions during country list loading (success, failure, loading, and error states).
 - Created `FakeCountryRepository` test double to mock repository data sources.
 - Configured `MainDispatcherRule` to properly manage and reset the `Dispatchers.Main` coroutine context during testing.
+
+## task/countries-feature-structure
+
+- Renamed the previous `home` package concept into a dedicated `feature.countries` feature package.
+- Reorganized countries feature files around a clearer feature-based structure.
+- Split countries UI into smaller Compose components:
+  - `CountriesScreen`
+  - `CountriesList`
+  - `CountryListItem`
+  - `CountrySearchField`
+  - `CountryDetailsContent`
+- Removed unnecessary nested screen files from `list` and `details` packages.
+- Kept `CountriesScreen` as the main screen responsible for composing the countries UI.
+- Kept `CountriesRoute` responsible for connecting `CountriesViewModel` with Compose state collection.
+- Kept `StateFlow` for persistent UI state such as countries list, loading state, error message, search query and selected country.
+- Improved error rendering so the countries list and `Load more` button are not displayed while an error is shown.
+- Verified that REST Countries v5 API configuration, authorization header and manifest internet permissions are set correctly.
+- Identified current API loading issue as an emulator DNS resolution problem, not an application architecture or Retrofit configuration issue.

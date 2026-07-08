@@ -1,14 +1,12 @@
-package com.example.restcountriesapp.home
+package com.example.restcountriesapp.feature.countries.list
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,12 +24,18 @@ fun CountriesList(
     onLoadNextPage: () -> Unit
 ) {
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = PaddingValues(bottom = 16.dp)
     ) {
-        items(countries) { country ->
+        items(
+            items = countries,
+            key = { country -> country.code }
+        ) { country ->
             CountryListItem(
                 country = country,
-                onClick = { onCountryClick(country) }
+                onClick = {
+                    onCountryClick(country)
+                }
             )
         }
 
@@ -48,27 +52,9 @@ fun CountriesList(
                         .fillMaxWidth()
                         .padding(vertical = 16.dp)
                 ) {
-                    Text(stringResource(R.string.load_more))
+                    Text(text = stringResource(R.string.load_more))
                 }
             }
         }
-    }
-}
-
-@Composable
-fun CountryListItem(
-    country: Country,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-    ) {
-        Text(
-            text = country.name,
-            modifier = Modifier.padding(16.dp),
-            style = MaterialTheme.typography.titleMedium
-        )
     }
 }

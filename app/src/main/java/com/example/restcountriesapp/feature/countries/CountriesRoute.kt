@@ -1,4 +1,4 @@
-package com.example.restcountriesapp.home
+package com.example.restcountriesapp.feature.countries
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -7,13 +7,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeRoute(
+fun CountriesRoute(
     modifier: Modifier = Modifier
 ) {
-    val viewModel: HomeViewModel = koinViewModel()
+    val viewModel: CountriesViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    HomeScreen(
+    CountriesScreen(
         state = state,
         onEvent = viewModel::onEvent,
         modifier = modifier

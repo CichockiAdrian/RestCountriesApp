@@ -1,8 +1,8 @@
-package com.example.restcountriesapp.home
+package com.example.restcountriesapp.feature.countries
 
 import com.example.restcountriesapp.domain.model.Country
 
-data class HomeState(
+data class CountriesState(
     val countries: List<Country> = emptyList(),
     val searchQuery: String = "",
     val selectedCountry: Country? = null,
@@ -15,13 +15,15 @@ data class HomeState(
     val filteredCountries: List<Country>
         get() {
             val query = searchQuery.trim()
+
             if (query.isBlank()) return countries
-            return countries.sortedBy { country ->
-                when {
-                    country.name.startsWith(query, ignoreCase = true) -> 0
-                    country.name.contains(query, ignoreCase = true) -> 1
-                    else -> 2
+
+            return countries
+                .filter { country ->
+                    country.name.contains(query, ignoreCase = true)
                 }
-            }
+                .sortedBy { country ->
+                    if (country.name.startsWith(query, ignoreCase = true)) 0 else 1
+                }
         }
 }
