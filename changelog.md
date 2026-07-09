@@ -160,3 +160,16 @@
 - Added fallback to cached countries when API loading fails.
 - Added cached country details loading by country code.
 - Prepared the data layer for a fuller offline-first single source of truth implementation.
+
+
+## task/offline-first-ssot
+
+* Refactored countries data flow to use Room as the single source of truth.
+* Updated repository so the UI observes countries from the local database via Flow.
+* Added synchronization flow where API data is fetched and saved into Room.
+* Added SyncCountriesUseCase for API-to-database synchronization.
+* Updated CountriesViewModel to observe local data and trigger background sync.
+* Updated CountryDetailsViewModel to observe country details from local cache by code.
+* Updated Koin modules to provide the new use cases.
+* Updated FakeCountryRepository and unit tests for Flow-based offline-first behavior.
+* Fixed API synchronization by fetching countries in chunks of 100 due to free plan request limits.
