@@ -15,7 +15,8 @@ val viewModelModule = module {
 
     viewModel {
         CountryDetailsViewModel(
-            getCountryByCodeUseCase = get()
+            getCountryByCodeUseCase = get(),
+            getCountryWikiInfoUseCase = get()
         )
     }
 }

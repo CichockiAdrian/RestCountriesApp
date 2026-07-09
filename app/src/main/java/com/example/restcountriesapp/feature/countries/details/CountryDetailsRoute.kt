@@ -2,9 +2,12 @@ package com.example.restcountriesapp.feature.countries.details
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -15,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.restcountriesapp.R
+import com.example.restcountriesapp.feature.countries.details.components.CountryDetailsContent
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -51,6 +55,9 @@ fun CountryDetailsRoute(
         state.country != null -> {
             CountryDetailsContent(
                 country = state.country!!,
+                wikiInfo = state.wikiInfo,
+                isWikiLoading = state.isWikiLoading,
+                wikiErrorMessage = state.wikiErrorMessage,
                 onBackClick = onBackClick,
                 modifier = modifier
             )
@@ -69,6 +76,10 @@ private fun CountryDetailsLoadingContent(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        CircularProgressIndicator()
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         Text(text = stringResource(R.string.loading_countries))
     }
 }
@@ -89,15 +100,15 @@ private fun CountryDetailsErrorContent(
     ) {
         Text(text = message)
 
-        Button(
-            onClick = onRetryClick
-        ) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(onClick = onRetryClick) {
             Text(text = stringResource(R.string.retry))
         }
 
-        Button(
-            onClick = onBackClick
-        ) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(onClick = onBackClick) {
             Text(text = stringResource(R.string.back))
         }
     }

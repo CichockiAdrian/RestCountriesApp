@@ -13,4 +13,15 @@
 
     <string name="loading_more_countries">Loading more countries...</string>
     <string name="load_more">Load more</string>
+    <string name="about_country">About</string>
+    <string name="source_wikipedia">Source: Wikipedia</string>
+    <string name="wiki_info_loading">Loading additional information...</string>
+    <string name="wiki_info_unavailable">Additional information is currently unavailable.</string>
+
+    <string name="country_code">Code</string>
+    <string name="capital">Capital</string>
+    <string name="region">Region</string>
+    <string name="population">Population</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
 </resources>
