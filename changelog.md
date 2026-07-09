@@ -164,12 +164,22 @@
 
 ## task/offline-first-ssot
 
-* Refactored countries data flow to use Room as the single source of truth.
-* Updated repository so the UI observes countries from the local database via Flow.
-* Added synchronization flow where API data is fetched and saved into Room.
-* Added SyncCountriesUseCase for API-to-database synchronization.
-* Updated CountriesViewModel to observe local data and trigger background sync.
-* Updated CountryDetailsViewModel to observe country details from local cache by code.
-* Updated Koin modules to provide the new use cases.
-* Updated FakeCountryRepository and unit tests for Flow-based offline-first behavior.
-* Fixed API synchronization by fetching countries in chunks of 100 due to free plan request limits.
+- Refactored countries data flow to use Room as the single source of truth.
+- Updated repository so the UI observes countries from the local database via Flow.
+- Added synchronization flow where API data is fetched and saved into Room.
+- Added SyncCountriesUseCase for API-to-database synchronization.
+- Updated CountriesViewModel to observe local data and trigger background sync.
+- Updated CountryDetailsViewModel to observe country details from local cache by code.
+- Updated Koin modules to provide the new use cases.
+- Updated FakeCountryRepository and unit tests for Flow-based offline-first behavior.
+- Fixed API synchronization by fetching countries in chunks of 100 due to free plan request limits.
+
+## feature/wiki-country-details
+
+- Added optional Wikipedia information section to the country details screen.
+- Integrated MediaWiki Action API to fetch short country descriptions.
+- Added Wiki remote data source, repository, use case and domain model.
+- Updated CountryDetailsViewModel to load Wiki data without blocking local country details.
+- Added Wiki loading and unavailable states.
+- Split country details UI into smaller components.
+- Added localized strings for country details and Wikipedia information.
