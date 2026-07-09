@@ -93,11 +93,10 @@ class CountryDetailsViewModel(
                             errorCode = ErrorCode.COUNTRY_NOT_FOUND
                         )
                     )
+                    return@collectLatest
                 }
 
-                country?.name?.let { countryName ->
-                    loadWikiInfo(countryName)
-                }
+                loadWikiInfo(country.name)
             }
         }
     }

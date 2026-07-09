@@ -3,7 +3,6 @@ package com.example.restcountriesapp.feature.countries
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -38,7 +37,7 @@ fun CountriesRoute(
 ) {
     val viewModel: CountriesViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
-
+    
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
@@ -47,7 +46,7 @@ fun CountriesRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect: UiEffect ->
+        viewModel.effect.collect { effect ->
             when (effect) {
                 is UiEffect.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(
@@ -66,75 +65,60 @@ fun CountriesRoute(
             SnackbarHost(hostState = snackbarHostState)
         }
     ) { paddingValues ->
-        CountriesNavContent(
-            state = state,
-            viewModel = viewModel,
+        NavDisplay(
             backStack = backStack,
-            paddingValues = paddingValues
+            onBack = {
+                if (backStack.size > 1) {
+                    backStack.removeLastOrNull()
+                }
+            },
+            entryProvider = { key ->
+                when (key) {
+                    CountriesListKey -> {
+                        NavEntry(key) {
+                            CountriesScreen(
+                                state = state,
+                                onEvent = viewModel::onEvent,
+                                onCountryClick = { country ->
+                                    backStack.add(
+                                        CountryDetailsKey(
+                                            countryCode = country.code
+                                        )
+                                    )
+                                },
+                                modifier = Modifier.padding(paddingValues)
+                            )
+                        }
+                    }
+
+                    is CountryDetailsKey -> {
+                        NavEntry(key) {
+                            CountryDetailsRoute(
+                                countryCode = key.countryCode,
+                                onBackClick = {
+                                    if (backStack.size > 1) {
+                                        backStack.removeAt(backStack.lastIndex)
+                                    }
+                                },
+                                modifier = Modifier.padding(paddingValues)
+                            )
+                        }
+                    }
+
+                    else -> {
+                        NavEntry(Unit) {
+                            MissingCountryContent(
+                                onBackClick = {
+                                    backStack.removeLastOrNull()
+                                },
+                                modifier = Modifier.padding(paddingValues)
+                            )
+                        }
+                    }
+                }
+            }
         )
     }
-}
-
-@Composable
-private fun CountriesNavContent(
-    state: CountriesState,
-    viewModel: CountriesViewModel,
-    backStack: MutableList<Any>,
-    paddingValues: PaddingValues
-) {
-    NavDisplay(
-        backStack = backStack,
-        onBack = {
-            if (backStack.size > 1) {
-                backStack.removeLastOrNull()
-            }
-        },
-        entryProvider = { key ->
-            when (key) {
-                CountriesListKey -> {
-                    NavEntry(key) {
-                        CountriesScreen(
-                            state = state,
-                            onEvent = viewModel::onEvent,
-                            onCountryClick = { country ->
-                                backStack.add(
-                                    CountryDetailsKey(
-                                        countryCode = country.code
-                                    )
-                                )
-                            },
-                            modifier = Modifier.padding(paddingValues)
-                        )
-                    }
-                }
-
-                is CountryDetailsKey -> {
-                    NavEntry(key) {
-                        CountryDetailsRoute(
-                            countryCode = key.countryCode,
-                            onBackClick = {
-                                if (backStack.size > 1) {
-                                    backStack.removeAt(backStack.lastIndex)
-                                }
-                            },
-                            modifier = Modifier.padding(paddingValues)
-                        )
-                    }
-                }
-
-                else -> {
-                    NavEntry(Unit) {
-                        MissingCountryContent(
-                            onBackClick = {
-                                backStack.removeLastOrNull()
-                            },
-                            modifier = Modifier.padding(paddingValues)
-                        )
-                    }
-                }
-            }
-        }
-    )
 }
 
 @Composable
