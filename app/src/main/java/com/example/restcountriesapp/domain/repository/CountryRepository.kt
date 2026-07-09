@@ -3,13 +3,17 @@ package com.example.restcountriesapp.domain.repository
 import com.example.restcountriesapp.core.result.DataResult
 import com.example.restcountriesapp.domain.model.CountriesPage
 import com.example.restcountriesapp.domain.model.Country
+import kotlinx.coroutines.flow.Flow
 
 interface CountryRepository {
-    suspend fun getCountries(
+
+    fun observeCountries(
         limit: Int = 25,
         offset: Int = 0,
         query: String? = null
-    ): DataResult<CountriesPage>
+    ): Flow<CountriesPage>
 
-    suspend fun getCountryByCode(code: String): DataResult<Country>
+    fun observeCountryByCode(code: String): Flow<Country?>
+
+    suspend fun syncCountries(): DataResult<Unit>
 }

@@ -2,9 +2,9 @@ package com.example.restcountriesapp.domain.usecase
 
 import com.example.restcountriesapp.domain.repository.CountryRepository
 
-class GetCountryByCodeUseCase(
-    private val repository: CountryRepository
+class ObserveCountryByCodeUseCase(
+    private val countryRepository: CountryRepository
 ) {
     operator fun invoke(code: String) =
-        repository.observeCountryByCode(code)
+        countryRepository.observeCountryByCode(code)
 }

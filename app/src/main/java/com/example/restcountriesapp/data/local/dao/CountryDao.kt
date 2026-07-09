@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.restcountriesapp.data.local.entity.CountryEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CountryDao {
@@ -17,11 +18,11 @@ interface CountryDao {
         LIMIT :limit OFFSET :offset
         """
     )
-    suspend fun getCountriesPage(
+    fun observeCountriesPage(
         limit: Int,
         offset: Int,
         query: String?
-    ): List<CountryEntity>
+    ): Flow<List<CountryEntity>>
 
     @Query(
         """
@@ -29,10 +30,10 @@ interface CountryDao {
         WHERE (:query IS NULL OR name LIKE '%' || :query || '%' OR code LIKE '%' || :query || '%')
         """
     )
-    suspend fun countCountries(query: String?): Int
+    fun observeCountriesCount(query: String?): Flow<Int>
 
     @Query("SELECT * FROM countries WHERE code = :code LIMIT 1")
-    suspend fun getCountryByCode(code: String): CountryEntity?
+    fun observeCountryByCode(code: String): Flow<CountryEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertCountries(countries: List<CountryEntity>)
