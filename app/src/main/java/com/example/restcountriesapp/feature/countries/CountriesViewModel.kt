@@ -2,12 +2,16 @@ package com.example.restcountriesapp.feature.countries
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.restcountriesapp.core.error.ErrorCode
 import com.example.restcountriesapp.core.result.DataResult
 import com.example.restcountriesapp.domain.usecase.GetCountriesUseCase
 import com.example.restcountriesapp.domain.usecase.SyncCountriesUseCase
+import com.example.restcountriesapp.feature.common.UiEffect
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
@@ -23,6 +27,9 @@ class CountriesViewModel(
 
     private val _state = MutableStateFlow(CountriesState())
     val state = _state.asStateFlow()
+
+    private val _effect = MutableSharedFlow<UiEffect>()
+    val effect = _effect.asSharedFlow()
 
     private var fetchJob: Job? = null
     private var searchDebounceJob: Job? = null
@@ -58,6 +65,7 @@ class CountriesViewModel(
 
                 if (event.query.isBlank()) {
                     loadCountries(refresh = true)
+                    syncCountries()
                 } else {
                     searchDebounceJob = viewModelScope.launch {
                         delay(searchDebounceMs)
@@ -88,10 +96,11 @@ class CountriesViewModel(
             _state.update { state ->
                 if (refresh) {
                     state.copy(
-                        isLoading = true,
+                        isLoading = state.countries.isEmpty(),
                         countries = emptyList(),
                         nextOffset = 0,
-                        hasMoreCountries = true
+                        hasMoreCountries = true,
+                        errorMessage = null
                     )
                 } else {
                     state.copy(
@@ -107,7 +116,7 @@ class CountriesViewModel(
                 query = query
             ).collectLatest { page ->
                 _state.update { state ->
-                    val countries = if (refresh) {
+                    val updatedCountries = if (refresh) {
                         page.countries
                     } else {
                         (state.countries + page.countries).distinctBy { country ->
@@ -116,12 +125,12 @@ class CountriesViewModel(
                     }
 
                     state.copy(
-                        countries = countries,
+                        countries = updatedCountries,
                         nextOffset = page.nextOffset,
                         hasMoreCountries = page.hasMore,
                         isLoading = false,
                         isLoadingNextPage = false,
-                        errorMessage = if (countries.isNotEmpty()) {
+                        errorMessage = if (updatedCountries.isNotEmpty()) {
                             null
                         } else {
                             state.errorMessage
@@ -139,7 +148,11 @@ class CountriesViewModel(
             when (val result = syncCountriesUseCase()) {
                 is DataResult.Success<*> -> {
                     _state.update { state ->
-                        state.copy(errorMessage = null)
+                        state.copy(
+                            isLoading = false,
+                            isLoadingNextPage = false,
+                            errorMessage = null
+                        )
                     }
                 }
 
@@ -155,6 +168,18 @@ class CountriesViewModel(
                             }
                         )
                     }
+
+                    val snackbarErrorCode = if (_state.value.countries.isEmpty()) {
+                        result.message
+                    } else {
+                        ErrorCode.OFFLINE_MODE
+                    }
+
+                    _effect.emit(
+                        UiEffect.ShowSnackbar(
+                            errorCode = snackbarErrorCode
+                        )
+                    )
                 }
             }
         }

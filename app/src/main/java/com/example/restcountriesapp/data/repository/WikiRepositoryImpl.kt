@@ -1,5 +1,6 @@
 package com.example.restcountriesapp.data.repository
 
+import com.example.restcountriesapp.core.crash.CrashReporter
 import com.example.restcountriesapp.core.error.ErrorCode
 import com.example.restcountriesapp.core.result.DataResult
 import com.example.restcountriesapp.data.remote.wiki.WikiRemoteDataSource
@@ -7,7 +8,8 @@ import com.example.restcountriesapp.domain.model.CountryWikiInfo
 import com.example.restcountriesapp.domain.repository.WikiRepository
 
 class WikiRepositoryImpl(
-    private val wikiRemoteDataSource: WikiRemoteDataSource
+    private val wikiRemoteDataSource: WikiRemoteDataSource,
+    private val crashReporter: CrashReporter
 ) : WikiRepository {
 
     override suspend fun getCountryWikiInfo(
@@ -22,6 +24,7 @@ class WikiRepositoryImpl(
                 DataResult.Success(wikiInfo)
             }
         } catch (exception: Exception) {
+            crashReporter.recordException(exception)
             DataResult.Failure(ErrorCode.NETWORK_ERROR)
         }
     }

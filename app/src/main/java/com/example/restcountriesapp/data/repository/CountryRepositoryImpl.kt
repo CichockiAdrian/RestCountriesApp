@@ -53,10 +53,13 @@ class CountryRepositoryImpl(
     override suspend fun syncCountries(): DataResult<Unit> {
         return try {
             val pageLimit = 100
-            var offset = 0
-            var hasMore = true
+            val maxRequests = 4
 
-            while (hasMore) {
+            var offset = 0
+            var requestCount = 0
+            var shouldContinue = true
+
+            while (shouldContinue && requestCount < maxRequests) {
                 val response = api.getCountries(
                     limit = pageLimit,
                     offset = offset,
@@ -70,17 +73,20 @@ class CountryRepositoryImpl(
 
                 if (countries.isNotEmpty()) {
                     countryDao.upsertCountries(
-                        countries = countries.map { country -> country.toEntity() }
+                        countries = countries.map { country ->
+                            country.toEntity()
+                        }
                     )
                 }
 
-                hasMore = countries.size == pageLimit
+                shouldContinue = countries.size == pageLimit
                 offset += pageLimit
+                requestCount++
             }
 
             DataResult.Success(Unit)
         } catch (exception: Exception) {
-            DataResult.Failure(exception.message ?: ErrorCode.NETWORK_ERROR)
+            DataResult.Failure(ErrorCode.NETWORK_ERROR)
         }
     }
 }

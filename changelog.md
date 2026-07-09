@@ -174,7 +174,7 @@
 - Updated FakeCountryRepository and unit tests for Flow-based offline-first behavior.
 - Fixed API synchronization by fetching countries in chunks of 100 due to free plan request limits.
 
-## feature/wiki-country-details
+## task/wiki-country-details
 
 - Added optional Wikipedia information section to the country details screen.
 - Integrated MediaWiki Action API to fetch short country descriptions.
