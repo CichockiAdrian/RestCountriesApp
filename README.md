@@ -14,7 +14,6 @@ Aplikacja ewoluowała od prostego prototypu do pełnowymiarowej architektury pro
 *   📖 **Integracja z Wikipedią**: Automatyczne pobieranie opisów krajów prosto z MediaWiki API.
 *   📉 **Paginacja**: Płynne przewijanie listy dzięki ładowaniu danych w paczkach.
 *   🛡️ **Stabilność**: Monitorowanie błędów za pomocą Firebase Crashlytics.
-*   🌐 **Wielojęzyczność**: Pełne wsparcie dla języka polskiego i angielskiego.
 
 ---
 
