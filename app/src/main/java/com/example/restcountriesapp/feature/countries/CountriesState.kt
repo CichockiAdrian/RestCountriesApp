@@ -19,10 +19,13 @@ data class CountriesState(
 
             return countries
                 .filter { country ->
-                    country.name.contains(query, ignoreCase = true)
+                    country.name.contains(query, ignoreCase = true) ||
+                            country.code.contains(query, ignoreCase = true)
                 }
                 .sortedBy { country ->
-                    if (country.name.startsWith(query, ignoreCase = true)) 0 else 1
+                    if (country.name.startsWith(query, ignoreCase = true) ||
+                        country.code.startsWith(query, ignoreCase = true)
+                    ) 0 else 1
                 }
         }
 }

@@ -24,4 +24,11 @@
     <string name="population">Population</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
+
+    <string name="error_network">Network error. Please try again.</string>
+    <string name="error_offline_mode">You are offline. Showing saved data.</string>
+    <string name="error_country_not_found">Country not found.</string>
+    <string name="error_invalid_country_code">Invalid country code.</string>
+    <string name="error_wiki_unavailable">Additional Wikipedia information is unavailable.</string>
+    <string name="error_unknown">Something went wrong.</string>
 </resources>

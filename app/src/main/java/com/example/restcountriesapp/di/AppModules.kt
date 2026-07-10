@@ -6,5 +6,6 @@ val appModules = listOf(
     viewModelModule,
     useCaseModule,
     databaseModule,
-    wikiModule
+    wikiModule,
+    crashModule
 )

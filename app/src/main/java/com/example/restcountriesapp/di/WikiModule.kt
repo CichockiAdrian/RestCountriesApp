@@ -22,7 +22,8 @@ val wikiModule = module {
 
     single<WikiRepository> {
         WikiRepositoryImpl(
-            wikiRemoteDataSource = get()
+            wikiRemoteDataSource = get(),
+            crashReporter = get()
         )
     }
 

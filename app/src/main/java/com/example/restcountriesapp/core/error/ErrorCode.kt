@@ -5,5 +5,7 @@ object ErrorCode {
     const val INVALID_COUNTRY_CODE = "INVALID_COUNTRY_CODE"
     const val NETWORK_ERROR = "NETWORK_ERROR"
     const val WIKI_INFO_NOT_FOUND = "WIKI_INFO_NOT_FOUND"
+    const val OFFLINE_MODE = "OFFLINE_MODE"
+    const val UNKNOWN_ERROR = "UNKNOWN_ERROR"
 
 }

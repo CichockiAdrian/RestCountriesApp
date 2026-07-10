@@ -1,6 +1,6 @@
 package com.example.restcountriesapp.data.remote.wiki
 
-import com.example.restcountriesapp.domain.model.CountryWikiInfo
+import com.example.restcountriesapp.data.remote.wiki.dto.CountryWikiInfoDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.HttpUrl
@@ -12,7 +12,7 @@ class WikiRemoteDataSource(
     private val client: OkHttpClient
 ) {
 
-    suspend fun getCountryInfo(countryName: String): CountryWikiInfo? {
+    suspend fun getCountryInfo(countryName: String): CountryWikiInfoDto? {
         return withContext(Dispatchers.IO) {
             val url = HttpUrl.Builder()
                 .scheme("https")
@@ -62,7 +62,7 @@ class WikiRemoteDataSource(
                     .optString("fullurl")
                     .takeIf { it.isNotBlank() }
 
-                CountryWikiInfo(
+                CountryWikiInfoDto(
                     title = title,
                     description = description,
                     thumbnailUrl = thumbnailUrl,

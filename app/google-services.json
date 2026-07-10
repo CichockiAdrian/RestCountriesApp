@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "750006459346",
+    "project_id": "restcountriesapp-bbb05",
+    "storage_bucket": "restcountriesapp-bbb05.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:750006459346:android:d130e87a09de82a6f5060b",
+        "android_client_info": {
+          "package_name": "com.example.restcountriesapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCseia2aiyr_qx72qNk7W0Oy01URpWUJj0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

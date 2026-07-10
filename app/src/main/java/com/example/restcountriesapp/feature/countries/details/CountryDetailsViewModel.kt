@@ -4,11 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.restcountriesapp.core.error.ErrorCode
 import com.example.restcountriesapp.core.result.DataResult
+import com.example.restcountriesapp.domain.model.CountryWikiInfo
 import com.example.restcountriesapp.domain.usecase.GetCountryByCodeUseCase
 import com.example.restcountriesapp.domain.usecase.GetCountryWikiInfoUseCase
-import com.example.restcountriesapp.domain.model.CountryWikiInfo
+import com.example.restcountriesapp.feature.common.UiEffect
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
@@ -21,6 +24,9 @@ class CountryDetailsViewModel(
 
     private val _state = MutableStateFlow(CountryDetailsState())
     val state = _state.asStateFlow()
+
+    private val _effect = MutableSharedFlow<UiEffect>()
+    val effect = _effect.asSharedFlow()
 
     private var loadCountryJob: Job? = null
     private var loadWikiJob: Job? = null
@@ -39,6 +45,15 @@ class CountryDetailsViewModel(
                     wikiErrorMessage = null
                 )
             }
+
+            viewModelScope.launch {
+                _effect.emit(
+                    UiEffect.ShowSnackbar(
+                        errorCode = ErrorCode.INVALID_COUNTRY_CODE
+                    )
+                )
+            }
+
             return
         }
 
@@ -72,9 +87,16 @@ class CountryDetailsViewModel(
                     )
                 }
 
-                country?.name?.let { countryName ->
-                    loadWikiInfo(countryName)
+                if (country == null) {
+                    _effect.emit(
+                        UiEffect.ShowSnackbar(
+                            errorCode = ErrorCode.COUNTRY_NOT_FOUND
+                        )
+                    )
+                    return@collectLatest
                 }
+
+                loadWikiInfo(country.name)
             }
         }
     }
@@ -115,6 +137,12 @@ class CountryDetailsViewModel(
                             wikiErrorMessage = result.message
                         )
                     }
+
+                    _effect.emit(
+                        UiEffect.ShowSnackbar(
+                            errorCode = result.message
+                        )
+                    )
                 }
             }
         }
