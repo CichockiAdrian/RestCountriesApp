@@ -31,7 +31,7 @@ class CountriesViewModel(
     private val _state = MutableStateFlow(CountriesState())
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<UiEffect>()
+    private val _effect = MutableSharedFlow<UiEffect>(replay = 1)
     val effect = _effect.asSharedFlow()
 
     private var fetchJob: Job? = null

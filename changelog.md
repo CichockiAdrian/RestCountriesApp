@@ -183,3 +183,15 @@
 - Added Wiki loading and unavailable states.
 - Split country details UI into smaller components.
 - Added localized strings for country details and Wikipedia information.
+
+## task/error-handling-crashlytics
+
+* Added Firebase Crashlytics configuration.
+* Added `CrashReporter` abstraction for reporting non-fatal exceptions.
+* Added user-facing error handling with Snackbar effects.
+* Added `UiEffect.ShowSnackbar` for one-time UI messages.
+* Added `ErrorMessageMapper` to map domain error codes to localized UI messages.
+* Added English and Polish error messages for network/offline/not found states.
+* Improved countries loading state handling to avoid infinite loading on startup.
+* Fixed countries search field behavior during loading state.
+* Improved offline-first error handling when sync fails but cached data exists.
