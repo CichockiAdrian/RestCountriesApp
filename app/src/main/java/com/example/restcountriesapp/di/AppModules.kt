@@ -7,5 +7,6 @@ val appModules = listOf(
     useCaseModule,
     databaseModule,
     wikiModule,
-    crashModule
+    crashModule,
+    authModule
 )

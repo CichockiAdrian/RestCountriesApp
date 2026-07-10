@@ -25,6 +25,8 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.restcountriesapp.R
 import com.example.restcountriesapp.core.error.ErrorCode
 import com.example.restcountriesapp.core.error.ErrorMessageMapper
+import com.example.restcountriesapp.feature.auth.AuthEvent
+import com.example.restcountriesapp.feature.auth.AuthViewModel
 import com.example.restcountriesapp.feature.common.UiEffect
 import com.example.restcountriesapp.feature.countries.details.CountryDetailsRoute
 import com.example.restcountriesapp.feature.countries.navigation.CountriesListKey
@@ -37,6 +39,9 @@ fun CountriesRoute(
 ) {
     val viewModel: CountriesViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val authViewModel: AuthViewModel = koinViewModel()
+    val authState by authViewModel.state.collectAsStateWithLifecycle()
     
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
@@ -78,7 +83,9 @@ fun CountriesRoute(
                         NavEntry(key) {
                             CountriesScreen(
                                 state = state,
+                                user = authState.user,
                                 onEvent = viewModel::onEvent,
+                                onAuthEvent = authViewModel::onEvent,
                                 onCountryClick = { country ->
                                     backStack.add(
                                         CountryDetailsKey(

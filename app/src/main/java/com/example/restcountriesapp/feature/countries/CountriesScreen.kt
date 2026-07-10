@@ -16,14 +16,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.restcountriesapp.R
+import com.example.restcountriesapp.domain.model.AuthUser
 import com.example.restcountriesapp.domain.model.Country
+import com.example.restcountriesapp.feature.auth.AuthEvent
+import com.example.restcountriesapp.feature.auth.UserProfileCard
 import com.example.restcountriesapp.feature.countries.list.CountriesList
 import com.example.restcountriesapp.feature.countries.list.CountrySearchField
 
 @Composable
 fun CountriesScreen(
     state: CountriesState,
+    user: AuthUser?,
     onEvent: (CountriesEvent) -> Unit,
+    onAuthEvent: (AuthEvent) -> Unit,
     onCountryClick: (Country) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -32,6 +37,14 @@ fun CountriesScreen(
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        user?.let {
+            UserProfileCard(
+                user = it,
+                onSignOutClick = { onAuthEvent(AuthEvent.SignOutClicked) }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
         CountriesHeader()
 
         Spacer(modifier = Modifier.height(16.dp))
