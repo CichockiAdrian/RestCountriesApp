@@ -1,86 +1,92 @@
-# RestCountriesApp
+# 🌍 RestCountriesApp
 
-A simple Android application built with Kotlin and Jetpack Compose.
+**RestCountriesApp** to nowoczesna aplikacja na Androida służąca do przeglądania informacji o krajach z całego świata. Projekt został stworzony z naciskiem na **Clean Architecture**, **Offline-first** oraz nowoczesne biblioteki Jetpack Compose.
 
-The project displays a list of countries, allows searching by country name and shows basic country details.
-The application is developed step by step, starting from a primitive implementation and gradually refactoring it into a cleaner architecture.
+Aplikacja ewoluowała od prostego prototypu do pełnowymiarowej architektury produkcyjnej, dokumentując każdy krok refaktoryzacji.
 
-## Project purpose
+---
 
-The main goal of this project is not only to build a working app, but also to show the process of improving code structure over time.
+## 🚀 Główne Funkcje
 
-The development starts with a simple implementation in one file and then evolves through separate branches into a more structured Android application.
+*   🔐 **Logowanie Google**: Bezpieczny dostęp dzięki Firebase Authentication (Google Sign-In).
+*   📦 **Offline-first**: Dane są zapisywane lokalnie (Room), dzięki czemu możesz przeglądać kraje bez dostępu do sieci.
+*   🔍 **Zaawansowane Wyszukiwanie**: Szybkie filtrowanie krajów po nazwie lub kodzie (np. "PL").
+*   📖 **Integracja z Wikipedią**: Automatyczne pobieranie opisów krajów prosto z MediaWiki API.
+*   📉 **Paginacja**: Płynne przewijanie listy dzięki ładowaniu danych w paczkach.
+*   🛡️ **Stabilność**: Monitorowanie błędów za pomocą Firebase Crashlytics.
+*   🌐 **Wielojęzyczność**: Pełne wsparcie dla języka polskiego i angielskiego.
 
-## Development process
+---
 
-The full step-by-step development process is described in [`changelog.md`](./changelog.md).
+## 🛠️ Stos Technologiczny
 
-Each branch represents one architectural improvement, for example:
+*   **UI**: Jetpack Compose (Material 3)
+*   **Architektura**: Clean Architecture + MVI/UDF (Unidirectional Data Flow)
+*   **DI**: Koin (Wstrzykiwanie zależności)
+*   **Database**: Room (Single Source of Truth)
+*   **Network**: Retrofit + OkHttp + Gson
+*   **Navigation**: Navigation 3 (najnowsze podejście oparte na Compose)
+*   **Backend**: Firebase (Auth, Crashlytics, Analytics)
+*   **Images**: Coil 3
+*   **Concurrency**: Kotlin Coroutines & Flow
 
-* primitive Compose implementation,
-* extracting smaller composable functions,
-* adding a `Country` model,
-* introducing screen state,
-* adding events,
-* moving logic to ViewModel,
-* preparing repository/API structure,
-* adding dependency injection.
+---
 
-## Current scope
+## 🏗️ Architektura Systemu
 
-The app currently includes:
+Projekt podzielony jest na jasne warstwy:
 
-* Jetpack Compose UI,
-* mock country list,
-* country search,
-* country details screen,
-* local Compose state,
-* gradual refactoring toward better architecture.
+1.  **Data Layer**: Implementacja API i Bazy Danych. Odpowiada za synchronizację danych (Remote -> Local).
+2.  **Domain Layer**: Czysty Kotlin. Zawiera logikę biznesową (Use Cases) oraz modele domenowe. Nie zna Androida.
+3.  **Presentation Layer**: ViewModele i Composable. Reaguje na stany i wysyła eventy.
 
-## Tech stack
+---
 
-* Kotlin
-* Jetpack Compose
-* Material 3
-* Android Studio
-* Gradle Kotlin DSL
+## 📸 Screeny
 
-## Planned architecture direction
+| Logowanie | Lista Krajów | Szczegóły |
+| :---: | :---: | :---: |
+| ![Login](https://raw.githubusercontent.com/CichockiAdrian/RestCountriesApp/main/screenshots/auth.png) | ![List](https://raw.githubusercontent.com/CichockiAdrian/RestCountriesApp/main/screenshots/list.png) | ![Details](https://raw.githubusercontent.com/CichockiAdrian/RestCountriesApp/main/screenshots/details.png) |
 
-The project is being refactored toward a cleaner structure based on:
+*(Uwaga: Powyższe linki są przykładowe, należy umieścić grafiki w folderze `screenshots` w repozytorium)*
 
-* UI state,
-* events/intents,
-* ViewModel,
-* models,
-* repository layer,
-* dependency injection.
+---
 
-Target flow:
+## 📜 Historia Zmian (Changelog)
 
-```text
-Screen
-  -> sends user events
+### task/firebase-auth-google
+*   Dodanie logowania przez Google (Firebase Auth + FirebaseUI).
+*   Zabezpieczenie aplikacji ekranem logowania.
+*   Dodanie profilu użytkownika z opcją wylogowania.
 
-ViewModel
-  -> handles events
-  -> updates state
+### task/error-handling-crashlytics
+*   Konfiguracja Firebase Crashlytics.
+*   Wprowadzenie Snackbarów dla błędów sieciowych i trybu offline.
+*   Mapowanie błędów domenowych na komunikaty lokalizowane.
 
-State
-  -> is observed by Compose UI
-```
+### task/wiki-country-details
+*   Integracja z MediaWiki API (opisy krajów w szczegółach).
+*   Dynamiczne ładowanie danych z zewnątrz.
 
-## Running the project
+### task/offline-first-ssot
+*   Wprowadzenie Room jako "Single Source of Truth".
+*   Synchronizacja danych API -> Baza Danych w tle.
+*   Pełna reaktywność UI na zmiany w bazie (Flow).
 
-Open the project in Android Studio and run it on an emulator or Android device.
+### task/nav3-navigation
+*   Migracja na Navigation 3.
+*   Zarządzanie backstackiem za pomocą kluczy nawigacyjnych.
 
-You can also build it from terminal:
+---
 
-```bash
-./gradlew build
-```
+## ⚙️ Konfiguracja
 
-## Notes
+Aby uruchomić projekt, potrzebujesz:
+1.  Pliku `google-services.json` w folderze `app/` (skonfigurowanego w Firebase Console).
+2.  Tokena do API Rest Countries zapisanego w `local.properties`:
+    `REST_COUNTRIES_TOKEN=twoj_token`
 
-This project is intentionally developed from a simple version to a more structured one.
-Some earlier branches may contain primitive or less optimal code on purpose, because they are part of the learning and refactoring process.
+---
+
+## 👨‍💻 Autor
+**Adrian Cichocki**
