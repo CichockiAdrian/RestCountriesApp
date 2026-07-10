@@ -46,9 +46,7 @@ Projekt podzielony jest na jasne warstwy:
 
 | Logowanie | Lista Krajów | Szczegóły |
 | :---: | :---: | :---: |
-| ![Login](https://raw.githubusercontent.com/CichockiAdrian/RestCountriesApp/main/screenshots/auth.png) | ![List](https://raw.githubusercontent.com/CichockiAdrian/RestCountriesApp/main/screenshots/list.png) | ![Details](https://raw.githubusercontent.com/CichockiAdrian/RestCountriesApp/main/screenshots/details.png) |
-
-*(Uwaga: Powyższe linki są przykładowe, należy umieścić grafiki w folderze `screenshots` w repozytorium)*
+| ![Login](https://github.com/CichockiAdrian/RestCountriesApp/blob/main/Zrzut%20ekranu%202026-07-10%20o%2010.38.07.png) | ![List](https://github.com/CichockiAdrian/RestCountriesApp/blob/main/Zrzut%20ekranu%202026-07-10%20o%2010.39.00.png) | ![Details](https://github.com/CichockiAdrian/RestCountriesApp/blob/main/Zrzut%20ekranu%202026-07-10%20o%2010.38.43.png) |
 
 ---
 
