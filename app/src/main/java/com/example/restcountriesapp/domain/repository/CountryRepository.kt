@@ -10,7 +10,8 @@ interface CountryRepository {
     fun observeCountries(
         limit: Int = 25,
         offset: Int = 0,
-        query: String? = null
+        query: String? = null,
+        region: String? = null
     ): Flow<CountriesPage>
 
     fun observeCountryByCode(code: String): Flow<Country?>

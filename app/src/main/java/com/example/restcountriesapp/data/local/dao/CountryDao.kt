@@ -14,6 +14,7 @@ interface CountryDao {
         """
         SELECT * FROM countries
         WHERE (:query IS NULL OR name LIKE '%' || :query || '%' OR code LIKE '%' || :query || '%')
+        AND (:region IS NULL OR region = :region)
         ORDER BY name
         LIMIT :limit OFFSET :offset
         """
@@ -21,16 +22,18 @@ interface CountryDao {
     fun observeCountriesPage(
         limit: Int,
         offset: Int,
-        query: String?
+        query: String?,
+        region: String?
     ): Flow<List<CountryEntity>>
 
     @Query(
         """
         SELECT COUNT(*) FROM countries
         WHERE (:query IS NULL OR name LIKE '%' || :query || '%' OR code LIKE '%' || :query || '%')
+        AND (:region IS NULL OR region = :region)
         """
     )
-    fun observeCountriesCount(query: String?): Flow<Int>
+    fun observeCountriesCount(query: String?, region: String?): Flow<Int>
 
     @Query("SELECT * FROM countries WHERE code = :code LIMIT 1")
     fun observeCountryByCode(code: String): Flow<CountryEntity?>

@@ -1,5 +1,7 @@
 package com.example.restcountriesapp.feature.auth
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,8 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -20,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.restcountriesapp.domain.model.AuthUser
+import com.example.restcountriesapp.ui.theme.AppSpacing
 
 @Composable
 fun UserProfileCard(
@@ -27,36 +30,41 @@ fun UserProfileCard(
     onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ElevatedCard(
-        modifier = modifier.fillMaxWidth()
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.small,
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
     ) {
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(AppSpacing.Medium)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
                 AsyncImage(
                     model = user.photoUrl,
-                    contentDescription = "User profile picture",
+                    contentDescription = null,
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(AppSpacing.Medium))
 
                 Column {
                     Text(
-                        text = user.displayName ?: "User",
-                        style = MaterialTheme.typography.titleMedium
+                        text = user.displayName ?: "Explorer",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     user.email?.let {
                         Text(
                             text = it,
-                            style = MaterialTheme.typography.bodySmall,
+                            style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -64,7 +72,11 @@ fun UserProfileCard(
             }
 
             TextButton(onClick = onSignOutClick) {
-                Text(text = "Sign out")
+                Text(
+                    text = "Sign out",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
             }
         }
     }

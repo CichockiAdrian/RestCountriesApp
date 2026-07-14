@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,12 +24,12 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.restcountriesapp.R
 import com.example.restcountriesapp.core.error.ErrorCode
 import com.example.restcountriesapp.core.error.ErrorMessageMapper
-import com.example.restcountriesapp.feature.auth.AuthEvent
 import com.example.restcountriesapp.feature.auth.AuthViewModel
 import com.example.restcountriesapp.feature.common.UiEffect
 import com.example.restcountriesapp.feature.countries.details.CountryDetailsRoute
 import com.example.restcountriesapp.feature.countries.navigation.CountriesListKey
 import com.example.restcountriesapp.feature.countries.navigation.CountryDetailsKey
+import com.example.restcountriesapp.ui.theme.AppSpacing
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -39,16 +38,13 @@ fun CountriesRoute(
 ) {
     val viewModel: CountriesViewModel = koinViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val navStack by viewModel.navigationStack.collectAsStateWithLifecycle()
 
     val authViewModel: AuthViewModel = koinViewModel()
     val authState by authViewModel.state.collectAsStateWithLifecycle()
     
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
-
-    val backStack = remember {
-        mutableStateListOf<Any>(CountriesListKey)
-    }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -70,61 +66,46 @@ fun CountriesRoute(
             SnackbarHost(hostState = snackbarHostState)
         }
     ) { paddingValues ->
-        NavDisplay(
-            backStack = backStack,
-            onBack = {
-                if (backStack.size > 1) {
-                    backStack.removeLastOrNull()
-                }
-            },
-            entryProvider = { key ->
-                when (key) {
-                    CountriesListKey -> {
-                        NavEntry(key) {
-                            CountriesScreen(
-                                state = state,
-                                user = authState.user,
-                                onEvent = viewModel::onEvent,
-                                onAuthEvent = authViewModel::onEvent,
-                                onCountryClick = { country ->
-                                    backStack.add(
-                                        CountryDetailsKey(
-                                            countryCode = country.code
-                                        )
-                                    )
-                                },
-                                modifier = Modifier.padding(paddingValues)
-                            )
-                        }
-                    }
-
-                    is CountryDetailsKey -> {
-                        NavEntry(key) {
-                            CountryDetailsRoute(
-                                countryCode = key.countryCode,
-                                onBackClick = {
-                                    if (backStack.size > 1) {
-                                        backStack.removeAt(backStack.lastIndex)
+        Box(modifier = Modifier.padding(paddingValues)) {
+            NavDisplay(
+                backStack = navStack,
+                onBack = { viewModel.navigateBack() },
+                entryProvider = { key ->
+                    when (key) {
+                        CountriesListKey -> {
+                            NavEntry(key) {
+                                CountriesScreen(
+                                    state = state,
+                                    user = authState.user,
+                                    onEvent = viewModel::onEvent,
+                                    onAuthEvent = authViewModel::onEvent,
+                                    onCountryClick = { country ->
+                                        viewModel.navigateToDetails(country.code)
                                     }
-                                },
-                                modifier = Modifier.padding(paddingValues)
-                            )
+                                )
+                            }
                         }
-                    }
 
-                    else -> {
-                        NavEntry(Unit) {
-                            MissingCountryContent(
-                                onBackClick = {
-                                    backStack.removeLastOrNull()
-                                },
-                                modifier = Modifier.padding(paddingValues)
-                            )
+                        is CountryDetailsKey -> {
+                            NavEntry(key) {
+                                CountryDetailsRoute(
+                                    countryCode = key.countryCode,
+                                    onBackClick = { viewModel.navigateBack() }
+                                )
+                            }
+                        }
+
+                        else -> {
+                            NavEntry(Unit) {
+                                MissingCountryContent(
+                                    onBackClick = { viewModel.navigateBack() }
+                                )
+                            }
                         }
                     }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
@@ -148,7 +129,8 @@ private fun MissingCountryContent(
             )
 
             Button(
-                onClick = onBackClick
+                onClick = onBackClick,
+                modifier = Modifier.padding(top = AppSpacing.Medium)
             ) {
                 Text(text = stringResource(R.string.back))
             }

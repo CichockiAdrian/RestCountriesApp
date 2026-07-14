@@ -8,6 +8,7 @@ sealed interface CountriesEvent {
     data object LoadNextPage : CountriesEvent
 
     data class SearchChanged(val query: String) : CountriesEvent
+    data class RegionChanged(val region: String) : CountriesEvent
     data object SearchSubmitted : CountriesEvent
 
 }

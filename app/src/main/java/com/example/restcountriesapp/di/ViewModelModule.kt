@@ -9,7 +9,8 @@ val viewModelModule = module {
     viewModel {
         CountriesViewModel(
             getCountriesUseCase = get(),
-            syncCountriesUseCase = get()
+            syncCountriesUseCase = get(),
+            savedStateHandle = get()
         )
     }
 

@@ -1,19 +1,23 @@
 package com.example.restcountriesapp.feature.countries.list
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import com.example.restcountriesapp.R
 import com.example.restcountriesapp.domain.model.Country
+import com.example.restcountriesapp.ui.theme.AppSpacing
 
 @Composable
 fun CountriesList(
@@ -21,38 +25,53 @@ fun CountriesList(
     isLoadingNextPage: Boolean,
     hasMoreCountries: Boolean,
     onCountryClick: (Country) -> Unit,
-    onLoadNextPage: () -> Unit
+    onLoadNextPage: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    val listState = rememberLazyListState()
+
+    val shouldLoadMore = remember {
+        derivedStateOf {
+            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
+                ?: return@derivedStateOf false
+
+            lastVisibleItem.index >= listState.layoutInfo.totalItemsCount - 5
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore.value) {
+        if (shouldLoadMore.value && hasMoreCountries && !isLoadingNextPage) {
+            onLoadNextPage()
+        }
+    }
+
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        contentPadding = PaddingValues(bottom = 16.dp)
+        state = listState,
+        modifier = modifier,
+        contentPadding = PaddingValues(bottom = AppSpacing.ExtraLarge),
+        verticalArrangement = Arrangement.spacedBy(AppSpacing.Medium)
     ) {
         items(
             items = countries,
-            key = { country -> country.code }
+            key = { it.code }
         ) { country ->
             CountryListItem(
                 country = country,
-                onClick = {
-                    onCountryClick(country)
-                }
+                onClick = { onCountryClick(country) }
             )
         }
 
-        item {
-            if (isLoadingNextPage) {
-                Text(
-                    text = stringResource(R.string.loading_more_countries),
-                    modifier = Modifier.padding(16.dp)
-                )
-            } else if (hasMoreCountries) {
-                Button(
-                    onClick = onLoadNextPage,
+        if (isLoadingNextPage) {
+            item {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp)
+                        .padding(AppSpacing.Medium),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(text = stringResource(R.string.load_more))
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         }

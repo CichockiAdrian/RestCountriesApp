@@ -21,17 +21,20 @@ class CountryRepositoryImpl(
     override fun observeCountries(
         limit: Int,
         offset: Int,
-        query: String?
+        query: String?,
+        region: String?
     ): Flow<CountriesPage> {
         val cleanQuery = query?.takeIf { it.isNotBlank() }
+        val cleanRegion = region?.takeIf { it != "All" && it.isNotBlank() }
 
         return combine(
             countryDao.observeCountriesPage(
                 limit = limit,
                 offset = offset,
-                query = cleanQuery
+                query = cleanQuery,
+                region = cleanRegion
             ),
-            countryDao.observeCountriesCount(cleanQuery)
+            countryDao.observeCountriesCount(cleanQuery, cleanRegion)
         ) { entities, totalCount ->
             val countries = entities.map { entity -> entity.toCountry() }
             val nextOffset = offset + countries.size

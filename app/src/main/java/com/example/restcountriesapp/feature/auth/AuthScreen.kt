@@ -1,5 +1,6 @@
 package com.example.restcountriesapp.feature.auth
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.example.restcountriesapp.R
+import com.example.restcountriesapp.ui.theme.AppSpacing
 
 @Composable
 fun AuthScreen(
@@ -26,32 +27,44 @@ fun AuthScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .background(MaterialTheme.colorScheme.background)
+            .padding(AppSpacing.Large),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
+            text = "GLOBAL ATLAS",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.tertiary
+        )
+        
+        Text(
             text = stringResource(R.string.rest_countries_title),
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.displayLarge,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(AppSpacing.Small))
 
         Text(
-            text = "Explore countries with offline-first data.",
+            text = "Explore the world's diverse nations with offline-first data and editorial insights.",
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(AppSpacing.Huge))
 
         Button(
             onClick = onSignInClick,
-            modifier = Modifier.height(56.dp)
+            modifier = Modifier.height(AppSpacing.Huge + AppSpacing.Small),
+            shape = MaterialTheme.shapes.small
         ) {
-            Text(text = "Continue with Google")
+            Text(
+                text = "Continue with Google",
+                style = MaterialTheme.typography.titleMedium
+            )
         }
     }
 }

@@ -8,10 +8,12 @@ class GetCountriesUseCase(
     operator fun invoke(
         limit: Int,
         offset: Int,
-        query: String? = null
+        query: String? = null,
+        region: String? = null
     ) = repository.observeCountries(
         limit = limit,
         offset = offset,
-        query = query
+        query = query,
+        region = region
     )
 }
