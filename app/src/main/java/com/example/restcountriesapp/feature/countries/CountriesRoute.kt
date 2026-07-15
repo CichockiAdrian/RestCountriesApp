@@ -3,6 +3,7 @@ package com.example.restcountriesapp.feature.countries
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -16,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -48,8 +48,8 @@ fun CountriesRoute(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    val isCountriesListVisible =
-        navStack.lastOrNull() == CountriesListKey
+    val isCountryDetailsVisible =
+        navStack.lastOrNull() is CountryDetailsKey
 
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
@@ -76,7 +76,7 @@ fun CountriesRoute(
             )
         },
         bottomBar = {
-            if (isCountriesListVisible) {
+            if (isCountryDetailsVisible) {
                 AdaptiveBannerAd()
             }
         }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -16,8 +15,11 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.restcountriesapp.core.ads.InlineAdaptiveBannerAd
 import com.example.restcountriesapp.domain.model.Country
 import com.example.restcountriesapp.ui.theme.AppSpacing
+
+private const val AD_INTERVAL = 15
 
 @Composable
 fun CountriesList(
@@ -32,15 +34,21 @@ fun CountriesList(
 
     val shouldLoadMore = remember {
         derivedStateOf {
-            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-                ?: return@derivedStateOf false
+            val lastVisibleItem =
+                listState.layoutInfo.visibleItemsInfo.lastOrNull()
+                    ?: return@derivedStateOf false
 
-            lastVisibleItem.index >= listState.layoutInfo.totalItemsCount - 5
+            lastVisibleItem.index >=
+                    listState.layoutInfo.totalItemsCount - 5
         }
     }
 
     LaunchedEffect(shouldLoadMore.value) {
-        if (shouldLoadMore.value && hasMoreCountries && !isLoadingNextPage) {
+        if (
+            shouldLoadMore.value &&
+            hasMoreCountries &&
+            !isLoadingNextPage
+        ) {
             onLoadNextPage()
         }
     }
@@ -48,21 +56,56 @@ fun CountriesList(
     LazyColumn(
         state = listState,
         modifier = modifier,
-        contentPadding = PaddingValues(bottom = AppSpacing.ExtraLarge),
-        verticalArrangement = Arrangement.spacedBy(AppSpacing.Medium)
+        contentPadding = PaddingValues(
+            bottom = AppSpacing.ExtraLarge
+        ),
+        verticalArrangement = Arrangement.spacedBy(
+            AppSpacing.Medium
+        )
     ) {
-        items(
-            items = countries,
-            key = { it.code }
-        ) { country ->
-            CountryListItem(
-                country = country,
-                onClick = { onCountryClick(country) }
-            )
+        countries.forEachIndexed { index, country ->
+            item(
+                key = "country-${country.code}",
+                contentType = "country"
+            ) {
+                CountryListItem(
+                    country = country,
+                    onClick = {
+                        onCountryClick(country)
+                    }
+                )
+            }
+
+            val countryPosition = index + 1
+
+            val shouldShowAd =
+                countryPosition % AD_INTERVAL == 0 &&
+                        (
+                                index < countries.lastIndex ||
+                                        hasMoreCountries
+                                )
+
+            if (shouldShowAd) {
+                item(
+                    key = "inline-ad-$countryPosition",
+                    contentType = "advertisement"
+                ) {
+                    InlineAdaptiveBannerAd(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                vertical = AppSpacing.Small
+                            )
+                    )
+                }
+            }
         }
 
         if (isLoadingNextPage) {
-            item {
+            item(
+                key = "loading-next-page",
+                contentType = "loading"
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
