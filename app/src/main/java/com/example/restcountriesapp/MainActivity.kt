@@ -10,11 +10,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.example.restcountriesapp.ui.theme.RestCountriesAppTheme
 import com.example.restcountriesapp.feature.main.AppRoute
+import com.example.restcountriesapp.core.ads.AdsManager
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        AdsManager.initialize(this)
+
         enableEdgeToEdge()
         setContent {
             RestCountriesAppTheme {

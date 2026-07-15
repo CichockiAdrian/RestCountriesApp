@@ -22,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.example.restcountriesapp.R
+import com.example.restcountriesapp.core.ads.AdaptiveBannerAd
 import com.example.restcountriesapp.core.error.ErrorCode
 import com.example.restcountriesapp.core.error.ErrorMessageMapper
 import com.example.restcountriesapp.feature.auth.AuthViewModel
@@ -42,17 +43,22 @@ fun CountriesRoute(
 
     val authViewModel: AuthViewModel = koinViewModel()
     val authState by authViewModel.state.collectAsStateWithLifecycle()
-    
+
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
+    val isCountriesListVisible =
+        navStack.lastOrNull() == CountriesListKey
+
+    LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is UiEffect.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(
                         message = context.getString(
-                            ErrorMessageMapper.toMessageRes(effect.errorCode)
+                            ErrorMessageMapper.toMessageRes(
+                                effect.errorCode
+                            )
                         )
                     )
                 }
@@ -61,15 +67,28 @@ fun CountriesRoute(
     }
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
+            SnackbarHost(
+                hostState = snackbarHostState
+            )
+        },
+        bottomBar = {
+            if (isCountriesListVisible) {
+                AdaptiveBannerAd()
+            }
         }
     ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             NavDisplay(
                 backStack = navStack,
-                onBack = { viewModel.navigateBack() },
+                onBack = {
+                    viewModel.navigateBack()
+                },
                 entryProvider = { key ->
                     when (key) {
                         CountriesListKey -> {
@@ -80,7 +99,9 @@ fun CountriesRoute(
                                     onEvent = viewModel::onEvent,
                                     onAuthEvent = authViewModel::onEvent,
                                     onCountryClick = { country ->
-                                        viewModel.navigateToDetails(country.code)
+                                        viewModel.navigateToDetails(
+                                            country.code
+                                        )
                                     }
                                 )
                             }
@@ -90,7 +111,9 @@ fun CountriesRoute(
                             NavEntry(key) {
                                 CountryDetailsRoute(
                                     countryCode = key.countryCode,
-                                    onBackClick = { viewModel.navigateBack() }
+                                    onBackClick = {
+                                        viewModel.navigateBack()
+                                    }
                                 )
                             }
                         }
@@ -98,7 +121,9 @@ fun CountriesRoute(
                         else -> {
                             NavEntry(Unit) {
                                 MissingCountryContent(
-                                    onBackClick = { viewModel.navigateBack() }
+                                    onBackClick = {
+                                        viewModel.navigateBack()
+                                    }
                                 )
                             }
                         }
@@ -124,15 +149,21 @@ private fun MissingCountryContent(
         ) {
             Text(
                 text = stringResource(
-                    ErrorMessageMapper.toMessageRes(ErrorCode.COUNTRY_NOT_FOUND)
+                    ErrorMessageMapper.toMessageRes(
+                        ErrorCode.COUNTRY_NOT_FOUND
+                    )
                 )
             )
 
             Button(
                 onClick = onBackClick,
-                modifier = Modifier.padding(top = AppSpacing.Medium)
+                modifier = Modifier.padding(
+                    top = AppSpacing.Medium
+                )
             ) {
-                Text(text = stringResource(R.string.back))
+                Text(
+                    text = stringResource(R.string.back)
+                )
             }
         }
     }
