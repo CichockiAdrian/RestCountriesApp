@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,7 +39,7 @@ fun UserProfileCard(
     ) {
         Row(
             modifier = Modifier
-                .padding(AppSpacing.Medium)
+                .padding(horizontal = AppSpacing.Medium, vertical = AppSpacing.Small)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -48,33 +49,36 @@ fun UserProfileCard(
                     model = user.photoUrl,
                     contentDescription = null,
                     modifier = Modifier
-                        .size(40.dp)
+                        .size(32.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                 )
 
-                Spacer(modifier = Modifier.width(AppSpacing.Medium))
+                Spacer(modifier = Modifier.width(AppSpacing.Small))
 
                 Column {
                     Text(
                         text = user.displayName ?: "Explorer",
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     user.email?.let {
                         Text(
                             text = it,
-                            style = MaterialTheme.typography.labelLarge,
+                            style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
             }
 
-            TextButton(onClick = onSignOutClick) {
+            TextButton(
+                onClick = onSignOutClick,
+                contentPadding = PaddingValues(horizontal = AppSpacing.Small, vertical = AppSpacing.ExtraSmall)
+            ) {
                 Text(
                     text = "Sign out",
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.tertiary
                 )
             }

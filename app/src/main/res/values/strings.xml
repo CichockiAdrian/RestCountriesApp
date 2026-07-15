@@ -27,6 +27,8 @@
 
     <string name="error_network">Network error. Please try again.</string>
     <string name="error_offline_mode">You are offline. Showing saved data.</string>
+    <string name="error_api_key">API key has been disabled or is invalid. Please check your developer key.</string>
+    <string name="error_server">Server error occurred. Please try again later.</string>
     <string name="error_country_not_found">Country not found.</string>
     <string name="error_invalid_country_code">Invalid country code.</string>
     <string name="error_wiki_unavailable">Additional Wikipedia information is unavailable.</string>

@@ -192,7 +192,11 @@ class CountriesViewModel(
                     val errorCode = if (state.value.countries.isEmpty()) {
                         result.message
                     } else {
-                        ErrorCode.OFFLINE_MODE
+                        if (result.message == ErrorCode.NETWORK_ERROR) {
+                            ErrorCode.OFFLINE_MODE
+                        } else {
+                            result.message
+                        }
                     }
                     _effect.emit(UiEffect.ShowSnackbar(errorCode))
                 }

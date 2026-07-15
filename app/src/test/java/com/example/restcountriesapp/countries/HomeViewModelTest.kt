@@ -16,6 +16,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import androidx.lifecycle.SavedStateHandle
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.TestScope
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -38,11 +41,16 @@ class HomeViewModelTest {
         syncCountriesUseCase = SyncCountriesUseCase(repository)
     }
 
-    private fun createViewModel(): CountriesViewModel {
-        return CountriesViewModel(
+    private fun TestScope.createViewModel(): CountriesViewModel {
+        val vm = CountriesViewModel(
             getCountriesUseCase = getCountriesUseCase,
-            syncCountriesUseCase = syncCountriesUseCase
+            syncCountriesUseCase = syncCountriesUseCase,
+            savedStateHandle = SavedStateHandle()
         )
+        backgroundScope.launch {
+            vm.state.collect {}
+        }
+        return vm
     }
 
     @Test

@@ -12,6 +12,8 @@ import com.example.restcountriesapp.core.error.ErrorCode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import retrofit2.HttpException
+import java.io.IOException
 
 class CountryRepositoryImpl(
     private val api: RestCountriesApi,
@@ -88,8 +90,16 @@ class CountryRepositoryImpl(
             }
 
             DataResult.Success(Unit)
-        } catch (exception: Exception) {
+        } catch (exception: HttpException) {
+            val errorCode = when (exception.code()) {
+                401, 403 -> ErrorCode.API_KEY_ERROR
+                else -> ErrorCode.SERVER_ERROR
+            }
+            DataResult.Failure(errorCode)
+        } catch (exception: IOException) {
             DataResult.Failure(ErrorCode.NETWORK_ERROR)
+        } catch (exception: Exception) {
+            DataResult.Failure(ErrorCode.UNKNOWN_ERROR)
         }
     }
 }

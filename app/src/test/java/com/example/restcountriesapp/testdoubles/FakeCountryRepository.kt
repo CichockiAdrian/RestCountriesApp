@@ -37,7 +37,8 @@ class FakeCountryRepository : CountryRepository {
     override fun observeCountries(
         limit: Int,
         offset: Int,
-        query: String?
+        query: String?,
+        region: String?
     ): Flow<CountriesPage> {
         if (shouldReturnError) {
             return flowOf(
@@ -53,7 +54,7 @@ class FakeCountryRepository : CountryRepository {
             return flowOf(page)
         }
 
-        val filteredCountries = query
+        var filteredCountries = query
             ?.takeIf { it.isNotBlank() }
             ?.let { searchQuery ->
                 countries.filter { country ->
@@ -62,6 +63,12 @@ class FakeCountryRepository : CountryRepository {
                 }
             }
             ?: countries
+
+        region?.takeIf { it.isNotBlank() && it != "All" }?.let { selectedRegion ->
+            filteredCountries = filteredCountries.filter { country ->
+                country.region.equals(selectedRegion, ignoreCase = true)
+            }
+        }
 
         val pageCountries = filteredCountries
             .drop(offset)

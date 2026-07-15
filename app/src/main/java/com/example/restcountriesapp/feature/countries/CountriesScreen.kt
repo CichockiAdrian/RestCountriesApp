@@ -1,8 +1,12 @@
 package com.example.restcountriesapp.feature.countries
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -19,13 +24,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.example.restcountriesapp.R
 import com.example.restcountriesapp.domain.model.AuthUser
 import com.example.restcountriesapp.domain.model.Country
 import com.example.restcountriesapp.feature.auth.AuthEvent
-import com.example.restcountriesapp.feature.auth.UserProfileCard
 import com.example.restcountriesapp.feature.countries.list.CountriesList
 import com.example.restcountriesapp.feature.countries.list.CountrySearchField
 import com.example.restcountriesapp.ui.theme.AppDimensions
@@ -51,16 +58,12 @@ fun CountriesScreen(
                 .widthIn(max = AppDimensions.MaxContentWidth)
                 .fillMaxWidth()
         ) {
-            user?.let {
-                Spacer(modifier = Modifier.height(AppSpacing.Small))
-                UserProfileCard(
-                    user = it,
-                    onSignOutClick = { onAuthEvent(AuthEvent.SignOutClicked) }
-                )
-                Spacer(modifier = Modifier.height(AppSpacing.Medium))
-            }
+            Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
-            CountriesHeader()
+            CountriesHeader(
+                user = user,
+                onSignOutClick = { onAuthEvent(AuthEvent.SignOutClicked) }
+            )
 
             Spacer(modifier = Modifier.height(AppSpacing.Medium))
 
@@ -98,18 +101,69 @@ fun CountriesScreen(
 }
 
 @Composable
-private fun CountriesHeader() {
-    Column {
-        Text(
-            text = "EXPLORE THE WORLD",
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.tertiary
-        )
-        Text(
-            text = stringResource(R.string.rest_countries_title),
-            style = MaterialTheme.typography.displayMedium,
-            fontWeight = FontWeight.Bold
-        )
+private fun CountriesHeader(
+    user: AuthUser?,
+    onSignOutClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "EXPLORE THE WORLD",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+                Text(
+                    text = stringResource(R.string.rest_countries_title),
+                    style = MaterialTheme.typography.displayMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            user?.let {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(AppSpacing.Small)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.End,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = it.displayName ?: "Explorer",
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "Sign out",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            modifier = Modifier
+                                .clip(MaterialTheme.shapes.extraSmall)
+                                .clickable { onSignOutClick() }
+                                .padding(vertical = 2.dp)
+                        )
+                    }
+
+                    AsyncImage(
+                        model = it.photoUrl,
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(AppSpacing.ExtraSmall))
+
         Text(
             text = "Discover essential information about nations across the globe.",
             style = MaterialTheme.typography.bodyMedium,
